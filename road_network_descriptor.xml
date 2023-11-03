@@ -1,0 +1,27 @@
+<road_network x="0" y="0" hdg="0" resolution="1000" vendor="RoadRunner" format="HDMap" action="generate">
+    <road length="100" geometry="line" type="urban" traffic_rule="RHT">
+      <lanes>
+        <right_section>
+          <lane width="3.5" type="driving">
+            <lane_marking asset_path="Assets/Markings/DashedSingleWhite.rrlms" type="DashedSingleWhite" position="right"/>
+          </lane>
+          <lane width="3.5" type="driving">
+            <lane_marking asset_path="Assets/Markings/SolidSingleWhite.rrlms" type="SolidSingleWhite" position="right"/>
+          </lane>
+      	</right_section>
+      	<center_section>
+          <lane width="0" type="median">
+            <lane_marking asset_path="Assets/Markings/SolidSingleYellow.rrlms" type="SolidSingleYellow" position="center"/>
+          </lane>
+      	</center_section>
+      	<left_section>
+          <lane width="3.5" type="driving">
+            <lane_marking asset_path="Assets/Markings/DashedSingleWhite.rrlms" type="DashedSingleWhite" position="left"/>
+          </lane>
+          <lane width="3.5" type="driving">
+            <lane_marking asset_path="Assets/Markings/SolidSingleWhite.rrlms" type="SolidSingleWhite" position="left"/>
+          </lane>
+      	</left_section>
+      </lanes>
+    </road>
+</road_network>
