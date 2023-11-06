@@ -6,36 +6,6 @@ from roadrunnerhdmapgenerator import generate
 
 
 
-def getRefLinePointAsListFromMultiLineStrings(multiLineStrings):
-    refLinePoints = []
-    for i in range(shapely.get_num_geometries(multiLineStrings)):
-        LineSegment = shapely.get_geometry(multiLineStrings, i)
-        startPoint = shapely.get_point(LineSegment, 0)
-        endPoint = shapely.get_point(LineSegment, 1)
-        startPoint_x = shapely.get_x(startPoint)
-        startPoint_y = shapely.get_y(startPoint)
-        endPoint_x = shapely.get_x(endPoint)
-        endPoint_y = shapely.get_y(endPoint)
-        startPontAsList = [startPoint_x, startPoint_y]
-        endPontAsList = [endPoint_x, endPoint_y]
-        if startPontAsList not in refLinePoints:
-            refLinePoints.append(startPontAsList)
-        if endPontAsList not in refLinePoints:
-            refLinePoints.append(endPontAsList)
-    return refLinePoints
-
-def createMultiLineStringsFromRefLinePoints(multiPoints):
-    multiLineStrings = []
-    if multiPoints is not None:
-        for i in range(shapely.get_num_geometries(multiPoints)-1):
-            prev_point = shapely.get_geometry(multiPoints, i)
-            next_point = shapely.get_geometry(multiPoints, i+1)
-            lineString = shapely.LineString([prev_point, next_point])
-            multiLineStrings.append(lineString)
-    multiLineStrings = shapely.multilinestrings(multiLineStrings)
-    return multiLineStrings
-
-
 
 class Geometry:
     def __init__(self, startX, startY, startHdg, length=None, endX=None, endY=None, endHdg=None):
@@ -57,22 +27,34 @@ class Geometry:
         self.refLine = None
         self.refLinePoints = []
 
+    
+    def createMultiLineStringsFromRefLinePoints(self):
+        multiLineStrings = []
+        if self.refLinePoints is not None:
+            for i in range(shapely.get_num_geometries(self.refLinePoints)-1):
+                prev_point = shapely.get_geometry(self.refLinePoints, i)
+                next_point = shapely.get_geometry(self.refLinePoints, i+1)
+                lineString = shapely.LineString([prev_point, next_point])
+                multiLineStrings.append(lineString)
+        self.refLine = shapely.multilinestrings(multiLineStrings)
+
 class Line(Geometry):
     def __init__(self, startX, startY, startHdg, length=None, endX=None, endY=None, endHdg=None):
         super().__init__(startX, startY, startHdg, length, endX, endY, endHdg)
         if self.length is not None and self.endX is None and self.endY is None:
             self.calculateRefLinePointsFromLengthAndStartPoint()
-            self.endX = shapely.get_geometry(self.refLinePoints,-1)
-            self.endY = shapely.get_geometry(self.refLinePoints,-1)
+            endPoint= shapely.get_geometry(self.refLinePoints,-1)
+            self.endX = shapely.get_x(endPoint)
+            self.endY = shapely.get_y(endPoint)
         elif self.endX is not None and self.endY is not None and self.length is None:
             self.calculateRefLinePointsFromStartPointAndEndPoint()
         else:
             raise Exception("Length or end position(x, y) must be given to create line segment.")
         self.endHdg = self.startHdg
-        self.refLine = createMultiLineStringsFromRefLinePoints(self.refLinePoints)
+        self.createMultiLineStringsFromRefLinePoints()
             
-        globals()["x"] = shapely.get_x(self.endX)
-        globals()["y"] = shapely.get_y(self.endY)
+        globals()["x"] = self.endX
+        globals()["y"] = self.endY
         globals()["hdg"] = self.endHdg
     
     def calculateRefLinePointsFromLengthAndStartPoint(self):
