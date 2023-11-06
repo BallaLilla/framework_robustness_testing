@@ -12,18 +12,22 @@ class Geometry:
         self.startX = float(startX)
         self.startY = float(startY)
         self.startHdg = float(startHdg)
-        self.length = length
-        if self.length is not None:
-            self.length = float(self.length)
-        self.endX = endX
-        if self.endX is not None:
-            self.endX = float(self.endX)
-        self.endY = endY
-        if self.endY is not None:
-            self.endY = float(self.endY)
-        self.endHdg = endHdg
-        if self.endHdg is not None:
-            self.endHdg = float(self.endHdg)
+        if length is not None:
+            self.length = float(length)
+        else:
+            self.length = length
+        if endX is not None:
+            self.endX = float(endX)
+        else:
+            self.endX = endX
+        if endY is not None:
+            self.endY = float(endY)
+        else:
+            self.endY = endY
+        if endHdg is not None:
+            self.endHdg = float(endHdg)
+        else:
+            self.endHdg = endHdg
         self.refLine = None
         self.refLinePoints = []
 
@@ -38,6 +42,10 @@ class Geometry:
                 multiLineStrings.append(lineString)
         self.refLine = shapely.multilinestrings(multiLineStrings)
 
+    def createGeometryFromXMLElement(geometry_element):
+        pass
+
+
 class Line(Geometry):
     def __init__(self, startX, startY, startHdg, length=None, endX=None, endY=None, endHdg=None):
         super().__init__(startX, startY, startHdg, length, endX, endY, endHdg)
@@ -51,7 +59,10 @@ class Line(Geometry):
         else:
             raise Exception("Length or end position(x, y) must be given to create line segment.")
         self.endHdg = self.startHdg
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!refLinePoints: ", self.refLinePoints)
         self.createMultiLineStringsFromRefLinePoints()
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!refLine: ", self.refLine)
+        
             
         globals()["x"] = self.endX
         globals()["y"] = self.endY
@@ -69,6 +80,14 @@ class Line(Geometry):
     def calculateRefLinePointsFromStartPointAndEndPoint(self):
         self.length = np.sqrt((self.endX - self.startX) **2 + (self.endX - self.startX) + (self.endY - self.startY) ** 2)
         self.calculateRefLinePointsFromLengthAndStartPoint()
+    
+    def createGeometryFromXMLElement(geometry_element, x, y, hdg):
+        length = geometry_element.get("length")
+        line = Line(startX=x, startY=y, startHdg=hdg, length=length)
+        return line
+
+        
+
 
        
         
@@ -214,12 +233,10 @@ class Section:
 
     
 class Road:
-    def __init__(self, id, actPosX, actPosY, actHdg, geometry, type, traffic_rule, length=None, endX=None, endY=None, endHdg=None):
+    def __init__(self, id, geometry, type, traffic_rule, endX=None, endY=None, endHdg=None):
         self.id = "Road" + str(id)
-        if length:
-            self.length = float(length)
-        if geometry == "line":
-            self.geometry = Line(startX=actPosX, startY=actPosY, startHdg=actHdg, length=length, endX=endX, endY=endY)
+        self.geometry = geometry
+        print("Road_geo_creation: ", self.geometry)
         self.type = type
         self.traffic_rule = traffic_rule
         self.predecessor = None
@@ -230,11 +247,16 @@ class Road:
         self.lane_boundaries = []
         
     def createRoadFromXMLElement(road_element, id):
-        length = road_element.get("length")
-        geometry = road_element.get("geometry")
+        geometry_element= road_element.find("geometry")
+        geo_type = geometry_element.get("type")
+        plan_view_geo=None
+        if geo_type == "line":
+            plan_view_geo = Line.createGeometryFromXMLElement(geometry_element, globals()["x"], globals()["y"], globals()["hdg"])
+            print("LINE_GEO_CREATION: ", plan_view_geo)
         type = road_element.get("type")
         traffic_rule = road_element.get("traffic_rule")
-        road = Road(id, actPosX=globals()["x"], actPosY=globals()["y"], actHdg=globals()["hdg"], geometry=geometry, type=type, traffic_rule=traffic_rule, length=length)
+        road = Road(id, geometry=plan_view_geo, type=type, traffic_rule=traffic_rule)
+        print("!!!!!!!!!!!!!!!ROAD_GEO: ", road.geometry)
         return road
     
     def get_all_lanes(self):
@@ -270,6 +292,7 @@ class Road:
     def build_geometry(self):
         for lane in self.get_all_lanes():
             center_line_offset = self.calculate_center_line_offset_from_roadCenterLine(lane.offsetFromCenterLane)
+            print("!!!!!!!!!!!!!!!!ROAD_refLine: ", self.geometry.refLine)
             lane.center_line = shapely.offset_curve(self.geometry.refLine, center_line_offset)
             lane.rightBoundary = shapely.offset_curve(lane.center_line, -lane.width/2)
             lane.leftBoundary = shapely.offset_curve(lane.center_line, lane.width/2)
