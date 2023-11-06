@@ -286,23 +286,12 @@ class Road:
         self.sections["left"].orderLanesAscending()
 
     def build_geometry(self):
-        for lane in self.sections["right"].get_lanes():
+        for lane in self.get_all_lanes():
             center_line_offset = self.calculate_center_line_offset_from_roadCenterLine(lane.offsetFromCenterLane)
             lane.center_line = shapely.offset_curve(self.geometry.refLine, center_line_offset)
             lane.rightBoundary = shapely.offset_curve(lane.center_line, -lane.width/2)
             lane.leftBoundary = shapely.offset_curve(lane.center_line, lane.width/2)
-                
-        for lane in self.sections["center"].get_lanes():
-            center_line_offset = self.calculate_center_line_offset_from_roadCenterLine(lane.offsetFromCenterLane)
-            lane.center_line = shapely.offset_curve(self.geometry.refLine, center_line_offset)
-            lane.rightBoundary = shapely.offset_curve(lane.center_line, -lane.width/2)
-            lane.leftBoundary = shapely.offset_curve(lane.center_line, lane.width/2)
-            
-        for lane in self.sections["left"].get_lanes():
-            center_line_offset = self.calculate_center_line_offset_from_roadCenterLine(lane.offsetFromCenterLane)
-            lane.center_line = shapely.offset_curve(self.geometry.refLine, center_line_offset)
-            lane.rightBoundary = shapely.offset_curve(lane.center_line, -lane.width/2)
-            lane.leftBoundary = shapely.offset_curve(lane.center_line, lane.width/2)
+
 
     def calculate_center_line_offset_from_roadCenterLine(self, offset):
         centerLaneWidth = self.sections["center"].get_lanes()[0].width
