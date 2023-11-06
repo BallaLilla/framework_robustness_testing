@@ -65,8 +65,11 @@ class Line(Geometry):
         
             
         globals()["x"] = self.endX
+        print("globals()[x]: ",  globals()["x"])
         globals()["y"] = self.endY
+        print("globals()[y]: ",  globals()["y"])
         globals()["hdg"] = self.endHdg
+        print("globals()[hdg]: ",  globals()["hdg"])
     
     def calculateRefLinePointsFromLengthAndStartPoint(self):
         self.refLinePoints = []
@@ -85,6 +88,68 @@ class Line(Geometry):
         length = geometry_element.get("length")
         line = Line(startX=x, startY=y, startHdg=hdg, length=length)
         return line
+    
+
+
+class Arc(Geometry):
+    def __init__(self, startX, startY, startHdg, curvature, angle=None, length=None, endX=None, endY=None, endHdg=None):
+        super().__init__(startX, startY, startHdg, length, endX, endY, endHdg)
+        if curvature:
+            if curvature == 0:
+                raise Exception("Zero curvature is specified. Please use line")
+            else:
+                self.curvature = float(curvature)
+        
+        self.radius = 1 / abs(self.curvature)
+        if angle:
+            self.angle = float(angle)
+            self.length = abs(self.angle) * self.radius
+        else:
+            raise Exception("Angle must be specified")
+        
+        self.calculateRefLinePoints()
+        endPoint= shapely.get_geometry(self.refLinePoints,-1)
+        self.endX = shapely.get_x(endPoint)
+        self.endY = shapely.get_y(endPoint)
+        self.endHdg = self.startHdg + self.angle
+        #print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!refLinePoints: ", self.refLinePoints)
+        self.createMultiLineStringsFromRefLinePoints()
+        #print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!refLine: ", self.refLine)
+        
+            
+        globals()["x"] = self.endX
+        print("globals()[x]: ",  globals()["x"])
+        globals()["y"] = self.endY
+        print("globals()[y]: ",  globals()["y"])
+        globals()["hdg"] = self.endHdg
+        print("globals()[hdg]: ",  globals()["hdg"])
+    
+    def calculateRefLinePoints(self):
+        self.refLinePoints = []
+        if self.curvature < 0:
+            center_hdg = self.startHdg - np.pi / 2
+        else:
+            center_hdg = self.startHdg + np.pi / 2
+
+        self.center_x = self.startX - np.cos(np.radians(center_hdg)) * self.radius
+        self.center_y = self.startY - np.sin(np.radians(center_hdg)) * self.radius
+
+         
+        for i in range(globals()["resolution"] + 1):
+            theta = self.startHdg + (i /globals()["resolution"]) * self.angle
+            point_x = self.center_x + self.radius * np.cos(np.radians(theta))
+            point_y = self.center_y + self.radius * np.sin(np.radians(theta))
+            self.refLinePoints.append((point_x, point_y))
+        self.refLinePoints = shapely.multipoints(self.refLinePoints)
+
+   
+    
+    def createGeometryFromXMLElement(geometry_element, x, y, hdg):
+        length = geometry_element.get("length")
+        curvature = geometry_element.get("curvature")
+        angle = geometry_element.get("angle")
+        arc = Arc(startX=x, startY=y, startHdg=hdg, length=length, curvature=curvature, angle=angle)
+        return arc
 
         
 
@@ -252,6 +317,9 @@ class Road:
         plan_view_geo=None
         if geo_type == "line":
             plan_view_geo = Line.createGeometryFromXMLElement(geometry_element, globals()["x"], globals()["y"], globals()["hdg"])
+            print("LINE_GEO_CREATION: ", plan_view_geo)
+        elif geo_type == "arc":
+            plan_view_geo = Arc.createGeometryFromXMLElement(geometry_element, globals()["x"], globals()["y"], globals()["hdg"])
             print("LINE_GEO_CREATION: ", plan_view_geo)
         type = road_element.get("type")
         traffic_rule = road_element.get("traffic_rule")
