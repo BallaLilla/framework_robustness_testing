@@ -90,6 +90,8 @@ class Line(Geometry):
         return line
     
 
+    
+
 
 class Arc(Geometry):
     def __init__(self, startX, startY, startHdg, curvature, angle=None, length=None, endX=None, endY=None, endHdg=None):
@@ -150,6 +152,56 @@ class Arc(Geometry):
         angle = geometry_element.get("angle")
         arc = Arc(startX=x, startY=y, startHdg=hdg, length=length, curvature=curvature, angle=angle)
         return arc
+    
+
+
+class Spiral(Geometry):
+    def __init__(self, startX, startY, startHdg, start_angle, end_angle, length, endX=None, endY=None, endHdg=None):
+        super().__init__(startX, startY, startHdg, length, endX, endY, endHdg)
+        if start_angle is None or end_angle is None or length is None:
+            raise Exception("Start angle and end angle and length are must be specified.")
+        else:
+            self.start_angle = float(start_angle)
+            self.end_angle = float(end_angle)
+        
+        self.calculateRefLinePoints()
+        print("spiral_points: ", self.refLinePoints)
+        endPoint= shapely.get_geometry(self.refLinePoints,-1)
+        self.endX = shapely.get_x(endPoint)
+        self.endY = shapely.get_y(endPoint)
+        self.endHdg = self.end_angle
+        #print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!refLinePoints: ", self.refLinePoints)
+        self.createMultiLineStringsFromRefLinePoints()
+        #print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!refLine: ", self.refLine)
+        
+            
+        globals()["x"] = self.endX
+        print("globals()[x]: ",  globals()["x"])
+        globals()["y"] = self.endY
+        print("globals()[y]: ",  globals()["y"])
+        globals()["hdg"] = self.endHdg
+        print("globals()[hdg]: ",  globals()["hdg"])
+    
+    def calculateRefLinePoints(self):
+        self.refLinePoints = []
+        angle_increment = (self.end_angle - self.start_angle) / (globals()["resolution"] - 1)
+
+        for i in range(globals()["resolution"]):
+            angle = np.radians(self.start_angle + i * angle_increment)
+            radius = i * (self.length / (globals()["resolution"] - 1))
+            x_i = self.startX + radius * np.cos(angle)
+            y_i = self.startY + radius * np.sin(angle)
+            self.refLinePoints.append(shapely.Point(x_i, y_i))
+        self.refLinePoints = shapely.multipoints(self.refLinePoints)
+
+   
+    
+    def createGeometryFromXMLElement(geometry_element, x, y, hdg):
+        length = geometry_element.get("length")
+        start_angle = geometry_element.get("start_angle")
+        end_angle = geometry_element.get("end_angle")
+        spiral = Spiral(startX=x, startY=y, startHdg=hdg, start_angle=start_angle, end_angle=end_angle, length=length)
+        return spiral
 
         
 
@@ -320,7 +372,10 @@ class Road:
             print("LINE_GEO_CREATION: ", plan_view_geo)
         elif geo_type == "arc":
             plan_view_geo = Arc.createGeometryFromXMLElement(geometry_element, globals()["x"], globals()["y"], globals()["hdg"])
-            print("LINE_GEO_CREATION: ", plan_view_geo)
+            print("ARC_GEO_CREATION: ", plan_view_geo)
+        elif geo_type == "spiral":
+            plan_view_geo = Spiral.createGeometryFromXMLElement(geometry_element, globals()["x"], globals()["y"], globals()["hdg"])
+            print("SPIRAL_GEO_CREATION: ", plan_view_geo)
         type = road_element.get("type")
         traffic_rule = road_element.get("traffic_rule")
         road = Road(id, geometry=plan_view_geo, type=type, traffic_rule=traffic_rule)
