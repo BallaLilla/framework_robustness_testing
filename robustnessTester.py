@@ -5,6 +5,38 @@ import shapely
 from roadrunnerhdmapgenerator import generate
 
 
+def createOffsetGeometry(offset, actMultiLineStrings, predMultiLineStrings=None):
+    offset_line = None
+     
+    if actMultiLineStrings is None:
+        raise Exception("actMultiLineString is None and must be specified")
+    
+    if offset is None:
+        raise Exception("offset is None and must be specified")
+    else:
+        offset_line = shapely.offset_curve(actMultiLineStrings, offset)
+   
+    if predMultiLineStrings is not None:
+        lastMultiLineString = shapely.get_geometry(predMultiLineStrings, -1)
+        last_point = shapely.get_point(lastMultiLineString, -1)
+        point_x = shapely.get_x(last_point)
+        point_y = shapely.get_y(last_point)
+
+        offset_line_first_segment = shapely.get_geometry(offset_line, 0)
+        offset_first_point = shapely.get_point(offset_line_first_segment, 0)
+        offset_first_x = shapely.get_x(offset_first_point)
+        offset_first_y = shapely.get_y(offset_first_point)
+
+       
+
+        x_offset = point_x - offset_first_x
+        y_offset = point_y - offset_first_y
+
+        offset_line = shapely.affinity.translate(offset_line, xoff=x_offset, yoff=y_offset)
+
+    return offset_line
+
+
 
 
 class Geometry:
@@ -59,17 +91,8 @@ class Line(Geometry):
         else:
             raise Exception("Length or end position(x, y) must be given to create line segment.")
         self.endHdg = self.startHdg
-        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!refLinePoints: ", self.refLinePoints)
         self.createMultiLineStringsFromRefLinePoints()
-        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!refLine: ", self.refLine)
-        
-            
-        globals()["x"] = self.endX
-        print("globals()[x]: ",  globals()["x"])
-        globals()["y"] = self.endY
-        print("globals()[y]: ",  globals()["y"])
-        globals()["hdg"] = self.endHdg
-        print("globals()[hdg]: ",  globals()["hdg"])
+    
     
     def calculateRefLinePointsFromLengthAndStartPoint(self):
         self.refLinePoints = []
@@ -90,6 +113,10 @@ class Line(Geometry):
         return line
     
 
+
+    
+   
+    
     
 
 
@@ -118,13 +145,6 @@ class Arc(Geometry):
         self.createMultiLineStringsFromRefLinePoints()
         #print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!refLine: ", self.refLine)
         
-            
-        globals()["x"] = self.endX
-        print("globals()[x]: ",  globals()["x"])
-        globals()["y"] = self.endY
-        print("globals()[y]: ",  globals()["y"])
-        globals()["hdg"] = self.endHdg
-        print("globals()[hdg]: ",  globals()["hdg"])
     
     def calculateRefLinePoints(self):
         self.refLinePoints = []
@@ -154,6 +174,32 @@ class Arc(Geometry):
         return arc
     
 
+    def createOffsetGeometry(self, offset, predStartPoint=None):
+        offset_arc = None
+        if offset is None:
+            raise Exception("offset is None and must be specified")
+        else:
+            offset_arc = shapely.offset_curve(self.refLine, offset)
+            
+
+
+        if predStartPoint is not None:
+           predStartPoint_x = shapely.get_x(predStartPoint)
+           predStartPoint_y = shapely.get_y(predStartPoint)
+           offset_arc_coords = offset_arc.coords
+           offset_arc_x = offset_arc_coords[0]
+           offset_arc_y = offset_arc_coords[1]
+
+           x_offset = predStartPoint_x - offset_arc_x
+           y_offset = predStartPoint_y - offset_arc_y
+
+           offset_arc = shapely.affinity.translate(offset_arc, x_offset=x_offset, y_offset=y_offset)
+
+        return offset_arc
+    
+
+    
+
 
 class Spiral(Geometry):
     def __init__(self, startX, startY, startHdg, start_angle, end_angle, length, endX=None, endY=None, endHdg=None):
@@ -165,7 +211,6 @@ class Spiral(Geometry):
             self.end_angle = float(end_angle)
         
         self.calculateRefLinePoints()
-        print("spiral_points: ", self.refLinePoints)
         endPoint= shapely.get_geometry(self.refLinePoints,-1)
         self.endX = shapely.get_x(endPoint)
         self.endY = shapely.get_y(endPoint)
@@ -174,24 +219,23 @@ class Spiral(Geometry):
         self.createMultiLineStringsFromRefLinePoints()
         #print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!refLine: ", self.refLine)
         
-            
-        globals()["x"] = self.endX
-        print("globals()[x]: ",  globals()["x"])
-        globals()["y"] = self.endY
-        print("globals()[y]: ",  globals()["y"])
-        globals()["hdg"] = self.endHdg
-        print("globals()[hdg]: ",  globals()["hdg"])
     
     def calculateRefLinePoints(self):
         self.refLinePoints = []
-        angle_increment = (self.end_angle - self.start_angle) / (globals()["resolution"] - 1)
+        theta1 = np.radians(self.start_angle)
+        theta2 = np.radians(self.end_angle)
+        K = (theta2 - theta1) / (self.length * 2)
 
-        for i in range(globals()["resolution"]):
-            angle = np.radians(self.start_angle + i * angle_increment)
-            radius = i * (self.length / (globals()["resolution"] - 1))
-            x_i = self.startX + radius * np.cos(angle)
-            y_i = self.startY + radius * np.sin(angle)
-            self.refLinePoints.append(shapely.Point(x_i, y_i))
+        R1 = 1 / K
+        R2 = 1 / (K + (self.length / 2))
+        
+        t = np.linspace(0, self.length, globals()["resolution"])
+        for i in t:
+            theta = theta1 + K * i ** 2
+            R = 1 / K + i
+            x = R * np.cos(theta)
+            y = R * np.sin(theta)
+            self.refLinePoints.append(shapely.Point(x, y))
         self.refLinePoints = shapely.multipoints(self.refLinePoints)
 
    
@@ -202,6 +246,29 @@ class Spiral(Geometry):
         end_angle = geometry_element.get("end_angle")
         spiral = Spiral(startX=x, startY=y, startHdg=hdg, start_angle=start_angle, end_angle=end_angle, length=length)
         return spiral
+
+    def createOffsetGeometry(self, offset, predStartPoint=None):
+        offset_spiral = None
+        if offset is None:
+            raise Exception("offset is None and must be specified")
+        else:
+            offset_spiral = shapely.offset_curve(self.refLine, offset)
+            
+
+
+        if predStartPoint is not None:
+           predStartPoint_x = shapely.get_x(predStartPoint)
+           predStartPoint_y = shapely.get_y(predStartPoint)
+           offset_spiral_coords = offset_spiral.coords
+           offset_spiral_x = offset_spiral_coords[0]
+           offset_spiral_y = offset_spiral_coords[1]
+
+           x_offset = predStartPoint_x - offset_spiral_x
+           y_offset = predStartPoint_y - offset_spiral_y
+
+           offset_spiral = shapely.affinity.translate(offset_spiral, x_offset=x_offset, y_offset=y_offset)
+
+        return offset_spiral
 
         
 
@@ -214,9 +281,7 @@ class Lane:
         self.type = type
         self.travel_dir = travel_dir
         self.center_line = None
-        self.rightBoundary = None
         self.rightBoundaryObject = None
-        self.leftBoundary = None
         self.leftBoundaryObject = None
         self.section = section
         self.road = road
@@ -353,7 +418,6 @@ class Road:
     def __init__(self, id, geometry, type, traffic_rule, endX=None, endY=None, endHdg=None):
         self.id = "Road" + str(id)
         self.geometry = geometry
-        print("Road_geo_creation: ", self.geometry)
         self.type = type
         self.traffic_rule = traffic_rule
         self.predecessor = None
@@ -369,17 +433,21 @@ class Road:
         plan_view_geo=None
         if geo_type == "line":
             plan_view_geo = Line.createGeometryFromXMLElement(geometry_element, globals()["x"], globals()["y"], globals()["hdg"])
-            print("LINE_GEO_CREATION: ", plan_view_geo)
         elif geo_type == "arc":
             plan_view_geo = Arc.createGeometryFromXMLElement(geometry_element, globals()["x"], globals()["y"], globals()["hdg"])
-            print("ARC_GEO_CREATION: ", plan_view_geo)
         elif geo_type == "spiral":
             plan_view_geo = Spiral.createGeometryFromXMLElement(geometry_element, globals()["x"], globals()["y"], globals()["hdg"])
-            print("SPIRAL_GEO_CREATION: ", plan_view_geo)
         type = road_element.get("type")
         traffic_rule = road_element.get("traffic_rule")
         road = Road(id, geometry=plan_view_geo, type=type, traffic_rule=traffic_rule)
-        print("!!!!!!!!!!!!!!!ROAD_GEO: ", road.geometry)
+
+        globals()["x"] = road.geometry.endX
+        print("globals()[x]: ",  globals()["x"])
+        globals()["y"] = road.geometry.endY
+        print("globals()[y]: ",  globals()["y"])
+        globals()["hdg"] = road.geometry.endHdg
+        print("globals()[hdg]: ",  globals()["hdg"])
+        
         return road
     
     def get_all_lanes(self):
@@ -412,13 +480,6 @@ class Road:
         self.sections["center"].orderLanesAscending()
         self.sections["left"].orderLanesAscending()
 
-    def build_geometry(self):
-        for lane in self.get_all_lanes():
-            center_line_offset = self.calculate_center_line_offset_from_roadCenterLine(lane.offsetFromCenterLane)
-            print("!!!!!!!!!!!!!!!!ROAD_refLine: ", self.geometry.refLine)
-            lane.center_line = shapely.offset_curve(self.geometry.refLine, center_line_offset)
-            lane.rightBoundary = shapely.offset_curve(lane.center_line, -lane.width/2)
-            lane.leftBoundary = shapely.offset_curve(lane.center_line, lane.width/2)
 
 
     def calculate_center_line_offset_from_roadCenterLine(self, offset):
@@ -438,14 +499,22 @@ class Road:
         return center_line_offset
     
     def create_and_set_lane_boundaries(self):
-        print("lane_boundary CREATION AND SETTING")
         boundaries = []
         all_lanes = self.get_all_lanes()
         for lane in all_lanes:
-            print("\nlane_id: ", lane.id)
+            # create lane center line
+            print("lane_id: ", lane.id)
+            predMultiLineString = None
+            center_line_offset = None
+            if lane.predecessor:
+                print("lane has pred: ", lane.predecessor.center_line)
+                predMultiLineString = lane.predecessor.center_line
+            center_line_offset = self.calculate_center_line_offset_from_roadCenterLine(lane.offsetFromCenterLane)
+            lane.center_line = createOffsetGeometry(offset=center_line_offset, actMultiLineStrings=self.geometry.refLine, predMultiLineStrings=predMultiLineString)
+            
+            #Creating boundaries
             lane_boundary_id = ""
             if lane.section == "right":
-                print("right")
                 if lane.rightNeighbour:
                     lane_boundary_id = lane.rightNeighbour.id
                 else:
@@ -453,15 +522,18 @@ class Road:
                 lane_boundary_id += "___"
                 lane_boundary_id += lane.id
                 lane_boundary_id += " boundary"
-                print("lane_b_id: ", lane_boundary_id)
-                lane_boundary = LaneBoundary(lane_boundary_id, lane.rightBoundary)
+                if lane.predecessor:
+                    print("lane has pred_rightBoundary: ", lane.predecessor.rightBoundaryObject.line)
+                    predMultiLineString=lane.predecessor.rightBoundaryObject.line
+            
+                lane_boundaryObject = createOffsetGeometry(offset=-lane.width/2,actMultiLineStrings=lane.center_line ,predMultiLineStrings=predMultiLineString)
+                lane_boundary = LaneBoundary(lane_boundary_id, lane_boundaryObject)
                 boundaries.append(lane_boundary) 
                 lane.rightBoundaryObject = lane_boundary
                 if lane.rightNeighbour:
                     lane.rightNeighbour.leftBoundaryObject = lane_boundary
                 
             elif lane.section == "left":
-                print("left")
                 lane_boundary_id = lane.id + "___"
                 if lane.leftNeighbour:
                     lane_boundary_id_ = lane.leftNeighbour.id
@@ -470,19 +542,21 @@ class Road:
                 lane_boundary_id += lane_boundary_id_
                 
                 lane_boundary_id += " boundary"
-                print("b_id: ", lane_boundary_id)
-                lane_boundary = LaneBoundary(lane_boundary_id, lane.leftBoundary)
+                if lane.predecessor:
+                    print("lane has pred_leftBoundary: ", lane.predecessor.leftBoundaryObject.line)
+                    predMultiLineString=lane.predecessor.leftBoundaryObject.line
+        
+                lane_boundaryObject = createOffsetGeometry(offset=lane.width/2, actMultiLineStrings=lane.center_line, predMultiLineStrings=predMultiLineString)
+                lane_boundary = LaneBoundary(lane_boundary_id, lane_boundaryObject)
                 boundaries.append(lane_boundary)
                 lane.leftBoundaryObject = lane_boundary
                 if lane.leftNeighbour:
                     lane.leftNeighbour.rightBoundaryObject = lane_boundary
 
             elif lane.section == "center":
-                print("center")
                 if lane.width == 0:
                     #right
                     lane_boundary_id = lane.rightNeighbour.id + "___" + lane.id
-                    print("right_b_: ", lane_boundary_id)
                     lane_boundary = LaneBoundary(lane_boundary_id, lane.center_line)
                     boundaries.append(lane_boundary)
                     if lane.rightNeighbour:
@@ -491,7 +565,6 @@ class Road:
         
                     #left
                     lane_boundary_id = lane.id + "___" + lane.leftNeighbour.id
-                    print("left_b_: ", lane_boundary_id)
                     lane_boundary = LaneBoundary(lane_boundary_id, lane.center_line)
                     boundaries.append(lane_boundary)
                     if lane.leftNeighbour:
@@ -518,32 +591,24 @@ class Road:
     
     def link_marking_and_boundaries(self):
         for lane in self.get_all_lanes():
-            print("___lane_id: ", lane.id)
             lane_markings = lane.get_lane_markings()
             for lane_marking in lane_markings:
-                print("___lane_marking_id: ", lane_marking.id)
                 if lane_marking.position == "right" and lane.section == "right":
-                    print("___lane_marking_pos: ", "right")
                     boundary = lane.rightBoundaryObject
                     for lane_boundary in self.get_lane_boundaries():
                         if boundary.id == lane_boundary.id:
-                            print("match: ", lane_boundary.id)
                             lane_boundary.set_marking(lane_marking)
                             lane_marking.set_id(boundary.id + "_marking")
                 elif lane_marking.position == "center" and lane.section == "center" and lane.width == 0:
-                    print("___lane_marking_pos: ", "center")
                     boundary = lane.rightBoundaryObject #Lehetne a bal oldali boundaryObject teljesen mindegy ugyanaz a geometriája mindkettőnek
                     for lane_boundary in self.get_lane_boundaries():
                         if boundary.id == lane_boundary.id:
-                            print("match: ", lane_boundary.id)
                             lane_boundary.set_marking(lane_marking)
                             lane_marking.set_id(boundary.id + "_marking")
                 if lane_marking.position == "left" and lane.section == "left":
-                    print("___lane_marking_pos: ", "left")
                     boundary = lane.leftBoundaryObject
                     for lane_boundary in self.get_lane_boundaries():
                         if boundary.id == lane_boundary.id:
-                            print("match: ", lane_boundary.id)
                             lane_boundary.set_marking(lane_marking)
                             lane_marking.set_id(boundary.id + "_marking")
                     
@@ -569,15 +634,15 @@ class RoadNetwork:
         
             lanes_element = road_element.find("lanes")
             road.classify_and_create_lanes(lanes_element)
-            road.build_geometry()
             road.set_neighbours()
-            road.create_and_set_lane_boundaries()
-            road_bounadries = road.get_lane_boundaries()
-            #for boundary in road_bounadries:
-                #print("boundary_id: ", boundary.get_id())
-            road.link_marking_and_boundaries()
+            #road_bounadries = road.get_lane_boundaries()
         roadNetwork.link_roads()
         roadNetwork.link_lanes()
+        for road in roadNetwork.roads:
+            #road.build_geometry()
+            road.create_and_set_lane_boundaries()
+            road.link_marking_and_boundaries()
+
         return roadNetwork
     
     def link_roads(self):
@@ -645,7 +710,7 @@ def main():
     road_network = RoadNetwork.build_from_xml("road_network_descriptor.xml")
     for road in road_network.roads:
         print("road_id", road.id)
-        print("     refLine: ", road.geometry.refLine)
+        print("     refLine: ", road.geometry)
         if road.successor:
             print("     successor_id: ", road.successor.id)
         if road.predecessor:
@@ -654,13 +719,14 @@ def main():
             for lane in road.sections[section].get_lanes():
                 print("\n         lane_id", lane.id)
                 print("         lane_geo", lane.center_line)
-                print("         lane_right_boundary", lane.rightBoundary)
-                print("         lane_right_boundary", lane.rightBoundaryObject.get_id())
+                print("         lane_geo_coords", lane.center_line)
+                print("         lane_right_boundaryObject_id", lane.rightBoundaryObject.id)
+                print("         lane_right_boundaryObject_geo", lane.rightBoundaryObject.line)
                 if lane.rightBoundaryObject.get_marking():
                     print("         lane_right_boundary_marking_id", lane.rightBoundaryObject.get_marking().id)
                     print("         lane_right_boundary_marking_asset", lane.rightBoundaryObject.get_marking().get_assetPath())
-                print("         lane_left_boundary", lane.leftBoundary)
-                print("         lane_left_boundary", lane.leftBoundaryObject.get_id())
+                print("         lane_left_boundaryObject_id", lane.leftBoundaryObject.id)
+                print("         lane_left_boundaryObject_geo", lane.leftBoundaryObject.line)
                 if lane.leftBoundaryObject.get_marking():
                     print("         lane_left_boundary_marking_id", lane.leftBoundaryObject.get_marking().id)
                     print("         lane_left_boundary_marking_asset", lane.leftBoundaryObject.get_marking().get_assetPath())
