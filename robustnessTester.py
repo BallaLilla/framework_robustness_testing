@@ -157,8 +157,8 @@ class Arc(Geometry):
         self.center_y = self.startY - np.sin(np.radians(center_hdg)) * self.radius
 
          
-        for i in range(globals()["resolution"] + 1):
-            theta = self.startHdg + (i /globals()["resolution"]) * self.angle
+        for i in range(globals()["resolution"]):
+            theta = self.startHdg + (i /(globals()["resolution"]-1)) * self.angle
             point_x = self.center_x + self.radius * np.cos(np.radians(theta))
             point_y = self.center_y + self.radius * np.sin(np.radians(theta))
             self.refLinePoints.append((point_x, point_y))
