@@ -147,21 +147,18 @@ class Arc(Geometry):
         
     
     def calculateRefLinePoints(self):
+        x = 0.0
+        y = 0.0
         self.refLinePoints = []
-        if self.curvature < 0:
-            center_hdg = self.startHdg - np.pi / 2
-        else:
-            center_hdg = self.startHdg + np.pi / 2
-
-        self.center_x = self.startX - np.cos(np.radians(center_hdg)) * self.radius
-        self.center_y = self.startY - np.sin(np.radians(center_hdg)) * self.radius
-
-         
         for i in range(globals()["resolution"]):
-            theta = self.startHdg + (i /(globals()["resolution"]-1)) * self.angle
-            point_x = self.center_x + self.radius * np.cos(np.radians(theta))
-            point_y = self.center_y + self.radius * np.sin(np.radians(theta))
-            self.refLinePoints.append((point_x, point_y))
+            theta = (i /(globals()["resolution"]-1)) * self.angle
+            x_rel= np.sin(np.radians(theta)) * self.radius
+            y_rel= (self.radius - np.cos(np.radians(theta)) * self.radius)
+            x_rel = np.cos(np.radians(self.startHdg)) * x_rel - np.sin(np.radians(self.startHdg)) * y_rel
+            y_rel = np.sin(np.radians(self.startHdg)) * x_rel + np.cos(np.radians(self.startHdg)) * y_rel
+            x += x_rel
+            y += y_rel
+            self.refLinePoints.append(shapely.Point(x, y))
         self.refLinePoints = shapely.multipoints(self.refLinePoints)
 
    
@@ -201,79 +198,7 @@ class Arc(Geometry):
     
 
 
-class Spiral(Geometry):
-    def __init__(self, startX, startY, startHdg, start_angle, end_angle, length, endX=None, endY=None, endHdg=None):
-        super().__init__(startX, startY, startHdg, length, endX, endY, endHdg)
-        if start_angle is None or end_angle is None or length is None:
-            raise Exception("Start angle and end angle and length are must be specified.")
-        else:
-            self.start_angle = float(start_angle)
-            self.end_angle = float(end_angle)
-        
-        self.calculateRefLinePoints()
-        endPoint= shapely.get_geometry(self.refLinePoints,-1)
-        self.endX = shapely.get_x(endPoint)
-        self.endY = shapely.get_y(endPoint)
-        self.endHdg = self.end_angle
-        #print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!refLinePoints: ", self.refLinePoints)
-        self.createMultiLineStringsFromRefLinePoints()
-        #print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!refLine: ", self.refLine)
-        
-    
-    def calculateRefLinePoints(self):
-        self.refLinePoints = []
-        theta1 = np.radians(self.start_angle)
-        theta2 = np.radians(self.end_angle)
-        K = (theta2 - theta1) / (self.length * 2)
 
-        R1 = 1 / K
-        R2 = 1 / (K + (self.length / 2))
-        
-        t = np.linspace(0, self.length, globals()["resolution"])
-        for i in t:
-            theta = theta1 + K * i ** 2
-            R = 1 / K + i
-            x = R * np.cos(theta)
-            y = R * np.sin(theta)
-            self.refLinePoints.append(shapely.Point(x, y))
-        self.refLinePoints = shapely.multipoints(self.refLinePoints)
-
-   
-    
-    def createGeometryFromXMLElement(geometry_element, x, y, hdg):
-        length = geometry_element.get("length")
-        start_angle = geometry_element.get("start_angle")
-        end_angle = geometry_element.get("end_angle")
-        spiral = Spiral(startX=x, startY=y, startHdg=hdg, start_angle=start_angle, end_angle=end_angle, length=length)
-        return spiral
-
-    def createOffsetGeometry(self, offset, predStartPoint=None):
-        offset_spiral = None
-        if offset is None:
-            raise Exception("offset is None and must be specified")
-        else:
-            offset_spiral = shapely.offset_curve(self.refLine, offset)
-            
-
-
-        if predStartPoint is not None:
-           predStartPoint_x = shapely.get_x(predStartPoint)
-           predStartPoint_y = shapely.get_y(predStartPoint)
-           offset_spiral_coords = offset_spiral.coords
-           offset_spiral_x = offset_spiral_coords[0]
-           offset_spiral_y = offset_spiral_coords[1]
-
-           x_offset = predStartPoint_x - offset_spiral_x
-           y_offset = predStartPoint_y - offset_spiral_y
-
-           offset_spiral = shapely.affinity.translate(offset_spiral, x_offset=x_offset, y_offset=y_offset)
-
-        return offset_spiral
-
-        
-
-
-       
         
 class Lane:
     def __init__(self, width, type, road, lane_id, section, travel_dir):

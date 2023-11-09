@@ -1,6 +1,6 @@
 <road_network x="0" y="0" hdg="0" resolution="1000" vendor="RoadRunner" format="HDMap" action="generate">
     <road type="urban" traffic_rule="RHT" >
-      <geometry angle="45" curvature="0.05" type="arc"/>
+      <geometry angle="60" curvature="0.05" type="arc"/>
       <lanes>
         <right_section>
           <lane width="3.5" type="driving">
@@ -25,8 +25,8 @@
       	</left_section>
       </lanes>
     </road>
-    <road type="urban" traffic_rule="RHT" >
-      <geometry start_angle="45" end_angle="60" length="10" type="spiral"/>
+     <road type="urban" traffic_rule="RHT" >
+      <geometry length="60" type="line"/>
       <lanes>
         <right_section>
           <lane width="3.5" type="driving">
@@ -50,31 +50,5 @@
           </lane>
       	</left_section>
       </lanes>
-    </road>
-    <road type="urban" traffic_rule="RHT" >
-      <geometry angle="60" type="arc" curvature="0.001"/>
-      <lanes>
-        <right_section>
-          <lane width="3.5" type="driving">
-            <lane_marking asset_path="Assets/Markings/DashedSingleWhite.rrlms" type="DashedSingleWhite" position="right"/>
-          </lane>
-          <lane width="3.5" type="driving">
-            <lane_marking asset_path="Assets/Markings/SolidSingleWhite.rrlms" type="SolidSingleWhite" position="right"/>
-          </lane>
-      	</right_section>
-      	<center_section>
-          <lane width="0" type="median">
-            <lane_marking asset_path="Assets/Markings/SolidSingleYellow.rrlms" type="SolidSingleYellow" position="center"/>
-          </lane>
-      	</center_section>
-      	<left_section>
-          <lane width="3.5" type="driving">
-            <lane_marking asset_path="Assets/Markings/DashedSingleWhite.rrlms" type="DashedSingleWhite" position="left"/>
-          </lane>
-          <lane width="3.5" type="driving">
-            <lane_marking asset_path="Assets/Markings/SolidSingleWhite.rrlms" type="SolidSingleWhite" position="left"/>
-          </lane>
-      	</left_section>
-      </lanes>
-    </road>
+    </road>    
 </road_network>
