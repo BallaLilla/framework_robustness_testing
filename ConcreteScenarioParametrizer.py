@@ -119,7 +119,7 @@ def median_lane_length():
     return 0
 
 def choose_random_lane_marking():
-    lane_markings = ["SolidSingleWhite", "SolidSingleYellow", "SingleSolidWhite", "DashedDoubleWhite", "DashedDoubleYellow", "DashedShortSingleWhite", "DashedShortSingleYellow", "DashedSingleWhite", "DashedSingleYellow",
+    lane_markings = ["SolidSingleWhite", "SolidSingleYellow", "DashedDoubleWhite", "DashedDoubleYellow", "DashedShortSingleWhite", "DashedShortSingleYellow", "DashedSingleWhite", "DashedSingleYellow",
                     "DashedSolidWhite", "DashedSolidYellow", "SolidDoubleWhite", "SolidDoubleYellow"]
     return random.choice(lane_markings)
 
@@ -136,7 +136,7 @@ def parametrizeConcreteScenario(network_setting, output_folder_path):
 
     # TODO: later will be modified when several road groups will be handled
     first_road_group = network_setting.road_groups[0]
-    traffic_rule = "RTH"
+    traffic_rule = "RHT"
 
     
     design_speed = get_design_speed(type=first_road_group.type, topography=first_road_group.topography, network_function=first_road_group.network_function)
@@ -147,12 +147,12 @@ def parametrizeConcreteScenario(network_setting, output_folder_path):
         print("type: ", geometry_type)
         geometry_element = None
         if geometry_type == "arc":
-            radius = get_min_curve_radius(design_speed=design_speed)
+            radius = get_min_curve_radius(design_speed=design_speed) / 100
             curvature = 1 / radius
             angle = random_angle()
             geometry_element = ET.SubElement(road_element, "geometry", type=geometry_type, curvature=str(curvature), angle=str(angle))
         elif geometry_type == "line":
-            length = get_max_straight_length(design_speed=design_speed)
+            length = get_max_straight_length(design_speed=design_speed) / 100
             geometry_element = ET.SubElement(road_element, "geometry", type=geometry_type, length=str(length))
         lanes_element = ET.SubElement(road_element, "lanes")
         right_lane_section = ET.SubElement(lanes_element, "right_section")
@@ -178,11 +178,11 @@ def parametrizeConcreteScenario(network_setting, output_folder_path):
         left_lane_section = ET.SubElement(lanes_element, "left_section")
         left_lane_number = get_lane_number_per_section(first_road_group.network_function)
         for i in range(left_lane_number):
-            lane_type = get_lane_type("right")
+            lane_type = get_lane_type("left")
             lane_width = get_lane_width(lane_type)
             lane_element = ET.SubElement(left_lane_section, "lane", type=lane_type, width=str(lane_width))
             lane_marking_type = choose_random_lane_marking()
-            lane_marking_element = ET.SubElement(lane_element, "lane_marking", position="right" ,type=lane_marking_type)
+            lane_marking_element = ET.SubElement(lane_element, "lane_marking", position="left" ,type=lane_marking_type)
 
     output_file_path = output_folder_path + "/descriptor.xml"
 

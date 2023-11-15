@@ -190,5 +190,7 @@ def generate_road_runner_hd_map(road_network, output_folder_path):
     print("------lane_markings--------")
     for laneMarking in rrMap.lane_markings:
         print("\n\nid: ", laneMarking.id)
+
+    
         
 

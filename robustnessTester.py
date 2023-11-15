@@ -10,6 +10,9 @@ from roadrunnerhdmapgenerator import generate_road_runner_hd_map
 from roadrunner_server import RoadRunnerServer
 from roadrunner_client import RoadRunnerClient
 
+from carla_server import CARLAServer
+from carla_client import CARLAClient
+
 import subprocess
 
 
@@ -46,14 +49,22 @@ if __name__ == "__main__":
         parametrizeConcreteScenario(road_network, output_folder_path)
         concrete_road_network = generate_concrete_road_network(output_folder_path + "/descriptor.xml")
         if settings.scene_building.tool == "RoadRunner":
+            pass
             generate_road_runner_hd_map(concrete_road_network, output_folder_path)
-            #server_start = subprocess.run("python " + "roadrunner_server.py")
             roadrunner_server = RoadRunnerServer(project_path=os.path.dirname(__file__) + "/Server")
             import_file_path = os.path.realpath(output_folder_path + "/rrMap")
             export_file_path = os.path.realpath(output_folder_path + "/rrMap_exported")
             print("import_file_path: ", import_file_path)
             print("export_file_path: ", export_file_path)
             roadrunner_client = RoadRunnerClient(import_file_path=import_file_path, import_format_name=settings.scene_building.import_format, export_file_path=export_file_path, export_format_name=settings.scene_building.export_format)
+        if settings.simulator.simulator == "CARLA":
+            pass
+            #print("starting carla server")
+            #carla_server = CARLAServer()
+            #print("starting and connecting carla client")
+            #carla_client = CARLAClient()
+            #print("loading xodr")
+            #carla_client._generate_opendrive_world(export_file_path + ".xodr")
 
             
 

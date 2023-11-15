@@ -16,16 +16,15 @@ class RoadRunnerClient:
            api = roadrunner_service_pb2_grpc.RoadRunnerServiceStub(channel)
 
            # create new project
-           print("Creating new project")
-           newProjectRequest = roadrunner_service_messages_pb2.NewProjectRequest()
-           dummy_path = os.path.realpath(os.path.dirname(__file__) + "/Dummy").replace(os.sep, '/')
-           if os.path.exists(dummy_path):
-               shutil.rmtree(dummy_path)
+           print("Load project")
+           loadProjectRequest = roadrunner_service_messages_pb2.LoadProjectRequest()
+           proj_path = os.path.realpath(os.path.dirname(__file__) + "/Server").replace(os.sep, '/')
+           #if os.path.exists(dummy_path):
+               #shutil.rmtree(dummy_path)
 
-           print("dummy_path: ", dummy_path)
-           newProjectRequest.folder_path =  dummy_path
-           newProjectRequest.asset_libraries.append("RoadRunner_Asset_Library")
-           api.NewProject(newProjectRequest)
+           print("proj_path: ", proj_path)
+           loadProjectRequest.folder_path =  proj_path
+           api.LoadProject(loadProjectRequest)
 
            # create new scene
            print("New scene creation")

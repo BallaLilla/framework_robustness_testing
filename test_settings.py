@@ -56,7 +56,7 @@ def json_to_config(json_data):
     scene_building_data = json_data.get("scene_building", {})
     scene_building = SceneBuilding(**scene_building_data)
 
-    simulator_data = json_data.get("simulator", {})
+    simulator_data = json_data.get("simulation", {})
     simulator = Simulator(**simulator_data)
 
     return Config(road_networks, scene_building, simulator)
