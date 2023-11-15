@@ -1,0 +1,27 @@
+{
+  "road_networks": [
+    {
+      "resolution": 10,
+      "initial_position_x": 0,
+      "initial_position_y": 0,
+      "initial_heading": 0,
+      "road_groups": [
+        {
+          "segment_count": 2,
+          "network_function": "a",
+          "topography": "A",
+          "type": "main",
+          "offset_from_ref_line": 0
+        }
+      ]
+    }
+  ],
+  "scene_building": {
+    "tool": "RoadRunner",
+    "import_format": "RoadRunner HD Map",
+    "export_format": "CARLA"
+  },
+  "simulator": {
+    "simulator": "CARLA"
+  }
+}

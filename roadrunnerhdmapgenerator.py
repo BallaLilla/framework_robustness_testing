@@ -92,7 +92,7 @@ def WriteToRRHD(filepath, headerMessage, HDMap):
 
     fileStream.close()
 
-def generate(road_network):
+def generate_road_runner_hd_map(road_network, output_folder_path):
 
     roadrunnerConverter = RoadRunnerHDMapConverter()
     rrMap = hd_map_pb2.HDMap()
@@ -109,7 +109,7 @@ def generate(road_network):
             lane_marking = laneBoundary.get_marking()
             if lane_marking:
                 print("marking_id: ", laneBoundary.get_marking().get_id())
-                rrLaneBoundaryMarking = hd_lane_markings_pb2.LaneMarking(asset_path = common_attributes_pb2.RelativeAssetPath(asset_path=lane_marking.get_assetPath()))
+                rrLaneBoundaryMarking = hd_lane_markings_pb2.LaneMarking(asset_path = common_attributes_pb2.RelativeAssetPath(asset_path="Assets/Markings/" + lane_marking.get_type() + ".rrlms"))
                 if laneBoundary.get_marking().get_id():
                     rrLaneBoundaryMarking.id = laneBoundary.get_marking().get_id()
                 
@@ -163,7 +163,7 @@ def generate(road_network):
     headerMessage = hd_map_header_pb2.Header()
     headerMessage.projection.projection = 'PROJCS["WGS 84 / Transverse Mercator",GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",0],PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1],AXIS["Easting",EAST],AXIS["Northing",NORTH]]'
     
-    filepath = os.path.join(r"C:\Users\balia\Desktop\szakdolgozat\robustness_testing\map_generation\test.rrhd")
+    filepath = output_folder_path  + "/rrMap.rrhd"
     WriteToRRHD(filepath, headerMessage, rrMap)
 
     print("------HD_map------")
