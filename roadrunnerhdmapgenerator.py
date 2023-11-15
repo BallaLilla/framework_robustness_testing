@@ -6,11 +6,11 @@ import mathworks.scenario.scene.hd.hd_lane_markings_pb2 as hd_lane_markings_pb2
 import mathworks.scenario.common.geometry_pb2 as geometry_pb2
 import google.protobuf.internal.encoder as encoder
 import google.protobuf.internal.decoder as decoder
-import os
-from converter import Converter
+
+from adapter import Adapter
 import shapely
 
-class RoadRunnerHDMapConverter(Converter):
+class RoadRunnerHDMapConverter(Adapter):
 
     def processMultiLineSegmentList(self, multilinestrings, settable):
         for i in range(shapely.get_num_geometries(multilinestrings)):
