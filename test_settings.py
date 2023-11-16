@@ -1,12 +1,22 @@
 import json
 
+class Mutation:
+    def __init__(self, type, **kwargs):
+        self.type = type
+        self.params = kwargs
+
+class MutationGroup:
+    def __init__(self, mutation_group_id, mutations):
+        self.mutation_group_id = mutation_group_id
+        self.mutations = [Mutation(**mutation) for mutation in mutations]
+
 class RoadGroup:
     def __init__(self, segment_count, network_function, topography, type, offset_from_ref_line):
         self.segment_count = segment_count
         self.network_function = network_function
         self.topography = topography
         self.type = type
-        self.offset_from_ref_line = 0 #offset_from_ref_line
+        self.offset_from_ref_line = offset_from_ref_line
 
 class RoadNetwork:
     def __init__(self, resolution, initial_position_x=0, initial_position_y=0, initial_heading=0, format="RoadRunner HD Map"):
@@ -16,9 +26,13 @@ class RoadNetwork:
         self.initial_heading = initial_heading
         self.format = format
         self.road_groups = []
-    
-    def add_road_groups(self, road_group):
+        self.mutation_groups = []
+
+    def add_road_group(self, road_group):
         self.road_groups.append(road_group)
+
+    def add_mutation_group(self, mutation_group):
+        self.mutation_groups.append(mutation_group)
 
 class SceneBuilding:
     def __init__(self, tool="RoadRunner", import_format="RoadRunner HD Map", export_format="CARLA"):
@@ -49,7 +63,14 @@ def json_to_config(json_data):
                                    initial_position_y=road_network_data.get("initial_position_y", 0),
                                    initial_heading=road_network_data.get("initial_heading", 0),
                                    format=road_network_data.get("format", "RoadRunner HD Map"))
-        road_network.add_road_groups(road_group)
+        road_network.add_road_group(road_group)
+
+        mutation_groups = road_network_data.get("mutation_groups", [])
+        for mutation_group_data in mutation_groups:
+            mutation_group_id = mutation_group_data.get("mutation_group_id", "")
+            mutations = mutation_group_data.get("mutations", [])
+            mutation_group = MutationGroup(mutation_group_id=mutation_group_id, mutations=mutations)
+            road_network.add_mutation_group(mutation_group)
 
         road_networks.append(road_network)
 

@@ -13,30 +13,49 @@ from roadrunner_client import RoadRunnerClient
 from carla_server import CARLAServer
 from carla_client import CARLAClient
 
-import subprocess
+import mutation
+
+import copy
+import time
+
+
 
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Robustness testing')
-    parser.add_argument('--config_file', dest='config_file', default='config.json', help='Path to the configuration file')
+    parser.add_argument('--config_file', dest='config_file', default='config.json',
+                        help='Path to the configuration file')
     return parser.parse_args()
+
 
 def create_output_folder(index):
     test_cases_folder = os.path.relpath(os.path.join(os.path.dirname(__file__), "test_cases"))
-    if os.path.exists(test_cases_folder):
-       shutil.rmtree(test_cases_folder)
-    os.makedirs(test_cases_folder)
+    if not os.path.exists(test_cases_folder):
+        os.makedirs(test_cases_folder)
 
-    # Generate a folder name based on the index
-    folder_name = f"test_case_{index + 1}"
+    network_folder_name = f"road_network_{index + 1}"
+    network_folder_path = os.path.join(test_cases_folder, network_folder_name)
 
-    # Create the output folder (delete and recreate if it already exists)
-    folder_path = os.path.join(test_cases_folder, folder_name)
-    if os.path.exists(os.path.realpath(folder_path)):
-        shutil.rmtree(folder_path)
-    os.makedirs(folder_path)
+    if os.path.exists(os.path.realpath(network_folder_path)):
+        shutil.rmtree(network_folder_path)
+    os.makedirs(network_folder_path)
 
-    return folder_name, folder_path
+    return network_folder_path
+
+
+def create_mutation_output_folder(network_folder_path, mutation_group):
+    network_folder_name = f"mutation_group_{mutation_group}"
+    
+    network_folder_path = os.path.join(network_folder_path, network_folder_name)
+
+    if os.path.exists(os.path.realpath(network_folder_path)):
+        shutil.rmtree(network_folder_path)
+    os.makedirs(network_folder_path)
+
+    return network_folder_path
+
+
+
 
 if __name__ == "__main__":
     args = parse_arguments()
@@ -44,29 +63,57 @@ if __name__ == "__main__":
     settings = read_config_from_file(args.config_file)
 
     for index, road_network in enumerate(settings.road_networks):
-        output_folder_name, output_folder_path = create_output_folder(index)
-        #print("road_group_type: ", road_network.road_groups[0].type)
-        parametrizeConcreteScenario(road_network, output_folder_path)
-        concrete_road_network = generate_concrete_road_network(output_folder_path + "/descriptor.xml")
-        if settings.scene_building.tool == "RoadRunner":
-            pass
-            generate_road_runner_hd_map(concrete_road_network, output_folder_path)
-            roadrunner_server = RoadRunnerServer(project_path=os.path.dirname(__file__) + "/Server")
-            import_file_path = os.path.realpath(output_folder_path + "/rrMap")
-            export_file_path = os.path.realpath(output_folder_path + "/rrMap_exported")
-            print("import_file_path: ", import_file_path)
-            print("export_file_path: ", export_file_path)
-            roadrunner_client = RoadRunnerClient(import_file_path=import_file_path, import_format_name=settings.scene_building.import_format, export_file_path=export_file_path, export_format_name=settings.scene_building.export_format)
-        if settings.simulator.simulator == "CARLA":
-            pass
-            #print("starting carla server")
-            #carla_server = CARLAServer()
-            #print("starting and connecting carla client")
-            #carla_client = CARLAClient()
-            #print("loading xodr")
-            #carla_client._generate_opendrive_world(export_file_path + ".xodr")
+        network_folder_path = create_output_folder(index)
 
+        # Generate rrMap for original road network
+        parametrizeConcreteScenario(road_network, network_folder_path)
+        concrete_road_network = generate_concrete_road_network(network_folder_path + "/descriptor.xml")
+
+        if settings.scene_building.tool == "RoadRunner":
+            generate_road_runner_hd_map(concrete_road_network, network_folder_path)
+            roadrunner_server = RoadRunnerServer(project_path=os.path.dirname(__file__) + "/Server")
+            import_file_path = os.path.realpath(network_folder_path + "/rrMap")
+            export_file_path = os.path.realpath(network_folder_path + "/rrMap_exported")
+            roadrunner_client = RoadRunnerClient(import_file_path=import_file_path,
+                                                 import_format_name=settings.scene_building.import_format,
+                                                 export_file_path=export_file_path,
+                                                 export_format_name=settings.scene_building.export_format)
+
+        if settings.simulator.simulator == "CARLA":
+            carla_server = CARLAServer()
+            carla_client = CARLAClient()
+            carla_client._generate_opendrive_world(export_file_path + ".xodr")
             
 
+        
+        for i in range(len(road_network.mutation_groups)):
+            time.sleep(10)
+            mutated_network = None
+            mutated_network_path = create_mutation_output_folder(network_folder_path, mutation_group=i + 1)
+            mutation_group = road_network.mutation_groups[i]
+            for m in range(len(mutation_group.mutations)):
+                mutation_ = mutation_group.mutations[m]
+                if mutation_.type == "laneMarkingReplacer":
+                    concrete_mutation = mutation.LaneMarkingReplacer(id=mutation_.params.get("id"), type=mutation_.type, newLaneType=mutation_.params.get("new_type"))
+                if m == 0:
+                    mutated_network = concrete_mutation.apply(copy.deepcopy(concrete_road_network))
+                else:
+                    mutated_network = concrete_mutation.apply(copy.deepcopy(mutated_network))
 
+                    
 
+                if settings.scene_building.tool == "RoadRunner":
+                    generate_road_runner_hd_map(mutated_network, mutated_network_path)
+                    roadrunner_server = RoadRunnerServer(project_path=os.path.dirname(__file__) + "/Server")
+                    import_file_path = os.path.realpath(mutated_network_path + "/rrMap")
+                    export_file_path = os.path.realpath(mutated_network_path + "/rrMap_exported")
+                    roadrunner_client = RoadRunnerClient(import_file_path=import_file_path,
+                                                        import_format_name=settings.scene_building.import_format,
+                                                        export_file_path=export_file_path,
+                                                        export_format_name=settings.scene_building.export_format)
+
+                if settings.simulator.simulator == "CARLA":
+                    carla_server = CARLAServer()
+                    carla_client = CARLAClient()
+                    carla_client._generate_opendrive_world(export_file_path + ".xodr")
+                

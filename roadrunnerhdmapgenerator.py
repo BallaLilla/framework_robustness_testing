@@ -98,17 +98,14 @@ def generate_road_runner_hd_map(road_network, output_folder_path):
     rrMap = hd_map_pb2.HDMap()
 
     for road in road_network.get_roads():
-        print("_____________________________________________-----ROADRUNNER_boundaries_creation---------_____________________________--")
         for laneBoundary in road.get_lane_boundaries():
-            print("lane_boundary_id ", laneBoundary.id)
             rrLaneBoundary = hd_lanes_pb2.LaneBoundary(id=laneBoundary.id)
             roadrunnerConverter.processMultiLineSegmentList(laneBoundary.get_line(), rrLaneBoundary.geometry.values)
             lane_marking = None
             rrLaneBoundaryParamAttrib = hd_lanes_pb2.ParametricAttribution(span=common_attributes_pb2.ParametricRange(span_start=0, span_end=1))
 
             lane_marking = laneBoundary.get_marking()
-            if lane_marking:
-                print("marking_id: ", laneBoundary.get_marking().get_id())
+            if lane_marking is not None:
                 rrLaneBoundaryMarking = hd_lane_markings_pb2.LaneMarking(asset_path = common_attributes_pb2.RelativeAssetPath(asset_path="Assets/Markings/" + lane_marking.get_type() + ".rrlms"))
                 if laneBoundary.get_marking().get_id():
                     rrLaneBoundaryMarking.id = laneBoundary.get_marking().get_id()
@@ -128,17 +125,12 @@ def generate_road_runner_hd_map(road_network, output_folder_path):
             rrLane.lane_type = roadrunnerConverter.processLaneType(lane.get_type(), rrLane.lane_type)
             rrLane.travel_dir = roadrunnerConverter.processTravelDir(lane.get_travel_dir(), rrLane.travel_dir)
 
-            if (lane.get_successor()):
-                print("suc: ", lane.get_successor().get_id())
-            if (lane.get_predecessor()):
-                print("pred: ", lane.get_predecessor().get_id())
+           
 
             if (lane.get_successor()):
                 rrLane.successors.append(common_attributes_pb2.AlignedReference(reference=common_attributes_pb2.Reference(id=lane.get_successor().get_id()), alignment=common_attributes_pb2.Alignment.ALIGNMENT_FORWARD))
-                print("rrLane_suc: ", rrLane.successors)
             if (lane.get_predecessor()):
                 rrLane.predecessors.append(common_attributes_pb2.AlignedReference(reference=common_attributes_pb2.Reference(id=lane.get_predecessor().get_id()), alignment=common_attributes_pb2.Alignment.ALIGNMENT_FORWARD))
-                print("rrLane_pred: ", rrLane.predecessors)
 
         
 
@@ -190,6 +182,7 @@ def generate_road_runner_hd_map(road_network, output_folder_path):
     print("------lane_markings--------")
     for laneMarking in rrMap.lane_markings:
         print("\n\nid: ", laneMarking.id)
+
 
     
         

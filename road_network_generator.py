@@ -222,9 +222,7 @@ class Lane:
         self.lane_markings.append(lane_marking)
 
     def createLaneFromXMLElement(lane_element, road, lane_id, lane_section):
-        print("lane_creation_from_xml")
         width = lane_element.get("width")
-        
         lane_type = lane_element.get("type")
         travel_dir = lane_element.get("direction")
         if travel_dir is None:
@@ -238,8 +236,6 @@ class Lane:
                 travel_dir = "forward"
         
         lane_markings = lane_element.findall("lane_marking")
-        print("len_lane_markings: ", len(lane_markings))
-
         lane = Lane(width, lane_type, road, lane_id, lane_section, travel_dir)
         for lane_marking in lane_markings:
             lane_marking_ = LaneMarking.createLaneMarkingFromXMLElement(lane_marking)
@@ -300,6 +296,10 @@ class LaneMarking:
     def get_id(self):
         return self.id
     
+    def replace(self, type):
+        self.type = type
+
+    
 
 class LaneBoundary:
     def __init__(self, id, line):
@@ -316,8 +316,10 @@ class LaneBoundary:
     def get_marking(self):
         return self.marking
     
+    
     def set_marking(self, marking):
         self.marking = marking
+    
     
     
 
@@ -427,20 +429,16 @@ class Road:
         all_lanes = self.get_all_lanes()
         for lane in all_lanes:
             # create lane center line
-            print("\nlane_id: ", lane.id)
-            print("lane_section: ", lane.section)
             predMultiLineString = None
             center_line_offset = None
             if lane.predecessor:
-                print("lane has pred: ", lane.predecessor.center_line)
                 predMultiLineString = lane.predecessor.center_line
             center_line_offset = self.calculate_center_line_offset_from_roadCenterLine(lane.offsetFromCenterLane)
             lane.center_line = createOffsetGeometry(offset=center_line_offset, actMultiLineStrings=self.geometry.refLine, predMultiLineStrings=predMultiLineString)
             
             #Creating boundaries
-            print("boundary creation")
             lane_boundary_id = ""
-            if lane.section == "right" or (lane.section == "center" and lane.width > 0):
+            if lane.section == "right":
                 if lane.rightNeighbour:
                     lane_boundary_id = lane.rightNeighbour.id
                 else:
@@ -449,19 +447,16 @@ class Road:
                 lane_boundary_id += lane.id
                 lane_boundary_id += " boundary"
                 if lane.predecessor:
-                    print("lane has pred_rightBoundary: ", lane.predecessor.rightBoundaryObject.line)
                     predMultiLineString=lane.predecessor.rightBoundaryObject.line
             
                 lane_boundaryObject = createOffsetGeometry(offset=-lane.width/2,actMultiLineStrings=lane.center_line ,predMultiLineStrings=predMultiLineString)
                 lane_boundary = LaneBoundary(lane_boundary_id, lane_boundaryObject)
-                print("right_boundary: ", lane_boundary_id)
                 boundaries.append(lane_boundary) 
                 lane.rightBoundaryObject = lane_boundary
                 if lane.rightNeighbour:
                     lane.rightNeighbour.leftBoundaryObject = lane_boundary
-                    print("lane.rightNeighbour.leftBoundaryObject: ", lane.rightNeighbour.leftBoundaryObject.id)
                 
-            if lane.section == "left" or (lane.section == "center" and lane.width > 0):
+            if lane.section == "left":
                 lane_boundary_id = lane.id + "___"
                 if lane.leftNeighbour:
                     lane_boundary_id_ = lane.leftNeighbour.id
@@ -471,34 +466,53 @@ class Road:
                 
                 lane_boundary_id += " boundary"
                 if lane.predecessor:
-                    print("lane has pred_leftBoundary: ", lane.predecessor.leftBoundaryObject.line)
                     predMultiLineString=lane.predecessor.leftBoundaryObject.line
         
                 lane_boundaryObject = createOffsetGeometry(offset=lane.width/2, actMultiLineStrings=lane.center_line, predMultiLineStrings=predMultiLineString)
                 lane_boundary = LaneBoundary(lane_boundary_id, lane_boundaryObject)
-                print("left_boundary: ", lane_boundary_id)
                 boundaries.append(lane_boundary)
                 lane.leftBoundaryObject = lane_boundary
                 if lane.leftNeighbour:
                     lane.leftNeighbour.rightBoundaryObject = lane_boundary
-                    print("lane.leftNeighbour.rightBoundaryObject: ", lane.leftNeighbour.rightBoundaryObject.id)
 
-            if lane.section == "center" and lane.width == 0:
+            if lane.section == "center":
                     #right
-                    lane_boundary_id = lane.rightNeighbour.id + "___" + lane.id + " boundary"
-                    lane_boundary = LaneBoundary(lane_boundary_id, lane.center_line)
-                    boundaries.append(lane_boundary)
+                    if lane.rightNeighbour:
+                        lane_boundary_id = lane.rightNeighbour.id
+                    else:
+                        lane_boundary_id = lane.id
+                    lane_boundary_id += "___"
+                    lane_boundary_id += lane.id
+                    lane_boundary_id += " boundary"
+                    if lane.predecessor:
+                        predMultiLineString=lane.predecessor.rightBoundaryObject.line
+                
+                    lane_boundaryObject = createOffsetGeometry(offset=-lane.width/2,actMultiLineStrings=lane.center_line ,predMultiLineStrings=predMultiLineString)
+                    lane_boundary = LaneBoundary(lane_boundary_id, lane_boundaryObject)
+                    boundaries.append(lane_boundary) 
+                    lane.rightBoundaryObject = lane_boundary
                     if lane.rightNeighbour:
                         lane.rightNeighbour.leftBoundaryObject = lane_boundary
-                    lane.rightBoundaryObject = lane_boundary
+                    
         
                     #left
-                    lane_boundary_id = lane.id + "___" + lane.leftNeighbour.id + " boundary"
-                    lane_boundary = LaneBoundary(lane_boundary_id, lane.center_line)
+                    lane_boundary_id = lane.id + "___"
+                    if lane.leftNeighbour:
+                        lane_boundary_id_ = lane.leftNeighbour.id
+                    else:
+                        lane_boundary_id_ = lane.id
+                    lane_boundary_id += lane_boundary_id_
+                    
+                    lane_boundary_id += " boundary"
+                    if lane.predecessor:
+                        predMultiLineString=lane.predecessor.leftBoundaryObject.line
+            
+                    lane_boundaryObject = createOffsetGeometry(offset=lane.width/2, actMultiLineStrings=lane.center_line, predMultiLineStrings=predMultiLineString)
+                    lane_boundary = LaneBoundary(lane_boundary_id, lane_boundaryObject)
                     boundaries.append(lane_boundary)
+                    lane.leftBoundaryObject = lane_boundary
                     if lane.leftNeighbour:
                         lane.leftNeighbour.rightBoundaryObject = lane_boundary
-                    lane.leftBoundaryObject = lane_boundary
                 
         self.lane_boundaries = boundaries
 
@@ -518,45 +532,41 @@ class Road:
         return self.lane_boundaries
     
     def link_marking_and_boundaries(self):
-        print("LANE_______________MARKINGS")
         for lane in self.get_all_lanes():
-            print("\nlane_id: ", lane.id)
-            print("lane_sec: ", lane.section)
-            print("lane_width: ", lane.width)
             lane_markings = lane.get_lane_markings()
-            print("lane has {} marking: ", len(lane_markings))
             for lane_marking in lane_markings:
-                print("lane_marking_pos: " + lane_marking.position)
                 if lane_marking.position == "right" and lane.section == "right":
-                    print("right_marking_pos and right_section")
                     boundary = lane.rightBoundaryObject
                     for lane_boundary in self.get_lane_boundaries():
                         if boundary.id == lane_boundary.id:
                             lane_boundary.set_marking(lane_marking)
                             lane_marking.set_id(boundary.id + "_marking")
                 if lane_marking.position == "right" and lane.section == "center" and lane.width > 0:
-                    print("right_marking_pos and center_section and lane.width > 0")
                     boundary = lane.rightBoundaryObject
                     for lane_boundary in self.get_lane_boundaries():
                         if boundary.id == lane_boundary.id:
                             lane_boundary.set_marking(lane_marking)
                             lane_marking.set_id(boundary.id + "_marking")
-                if lane_marking.position == "center" and lane.section == "center" and lane.width == 0:
-                    print("center_marking_pos and center_section and lane.width =0")
-                    boundary = lane.rightBoundaryObject #Lehetne a bal oldali boundaryObject teljesen mindegy ugyanaz a geometriája mindkettőnek
+                if lane.section == "center" and lane.width == 0:
+                    boundary = lane.rightBoundaryObject
                     for lane_boundary in self.get_lane_boundaries():
                         if boundary.id == lane_boundary.id:
                             lane_boundary.set_marking(lane_marking)
                             lane_marking.set_id(boundary.id + "_marking")
+
+                    boundary = lane.leftBoundaryObject
+                    for lane_boundary in self.get_lane_boundaries():
+                        if boundary.id == lane_boundary.id:
+                            lane_boundary.set_marking(lane_marking)
+                            lane_marking.set_id(boundary.id + "_marking")
+                    
                 if lane_marking.position == "left" and lane.section == "left":
-                    print("left_marking_pos and left_section")
                     boundary = lane.leftBoundaryObject
                     for lane_boundary in self.get_lane_boundaries():
                         if boundary.id == lane_boundary.id:
                             lane_boundary.set_marking(lane_marking)
                             lane_marking.set_id(boundary.id + "_marking")
                 if lane_marking.position == "left" and lane.section == "center" and lane.width > 0:
-                    print("left_marking_pos and center_section and lane.width > 0")
                     boundary = lane.leftBoundaryObject
                     for lane_boundary in self.get_lane_boundaries():
                         if boundary.id == lane_boundary.id:
@@ -648,6 +658,34 @@ class RoadNetwork:
 
     def get_roads(self):
         return self.roads
+    
+
+    def get_item_by_id(self, item_id):
+        print("keresett_id: ", item_id)
+        for road in self.roads:
+            if road.id == item_id:
+                return road
+            for lane in road.get_all_lanes():
+                if lane.id == item_id:
+                    return lane
+                rightBoundaryObj = lane.rightBoundaryObject
+                if rightBoundaryObj.id == item_id:
+                    return rightBoundaryObj
+                rightBoundaryObjMarking = rightBoundaryObj.get_marking()
+                if rightBoundaryObjMarking is not None:
+                    if rightBoundaryObjMarking.id == item_id:
+                        return rightBoundaryObjMarking
+                    
+                leftBoundaryObj = lane.leftBoundaryObject
+                if leftBoundaryObj.id == item_id:
+                    return leftBoundaryObj
+                leftBoundaryObjMarking = leftBoundaryObj.get_marking()
+                if leftBoundaryObjMarking is not None:
+                    if leftBoundaryObjMarking.id == item_id:
+                        return leftBoundaryObjMarking
+        print("Nincs ilyen")
+        return None
+                
 
         
 
@@ -655,10 +693,6 @@ def generate_concrete_road_network(descriptor_xml_path):
 
     
     global x, y, hdg, resolution
-    #x = 0
-    #y = 0.0
-    #hdg = 0.0
-    #resolution = 5
     
     road_network = RoadNetwork.build_from_xml(descriptor_xml_path)
     for road in road_network.roads:
@@ -673,11 +707,13 @@ def generate_concrete_road_network(descriptor_xml_path):
                 print("\n         lane_id", lane.id)
                 #print("         lane_geo", lane.center_line)
                 print("         lane_right_boundaryObject_id", lane.rightBoundaryObject.id)
-                print("         lane_left_boundaryObject_id", lane.leftBoundaryObject.id)
                 marking = lane.rightBoundaryObject.get_marking()
                 print("         lane_right_boundary_marking_id", marking.id)
+                print("         lane_right_boundary_marking_type", marking.type)
+                print("         lane_left_boundaryObject_id", lane.leftBoundaryObject.id)
                 marking = lane.leftBoundaryObject.get_marking()
                 print("         lane_left_boundary_marking_id", marking.id)
+                print("         lane_left_boundary_marking_type", marking.type)
                 if lane.successor:
                     print("         lane_suc_id", lane.successor.id)
                 if lane.predecessor:
@@ -695,9 +731,9 @@ def generate_concrete_road_network(descriptor_xml_path):
         for boundary in road.lane_boundaries:
             print("____boundary_id ", boundary.id)
             lane_marking = boundary.get_marking()
-            print("____marking ", lane_marking.id)
-            print("____marking_type ", lane_marking.type)
-            print("____marking_pos ", lane_marking.position)
+            #print("____marking ", lane_marking.id)
+            #print("____marking_type ", lane_marking.type)
+            #print("____marking_pos ", lane_marking.position)
 
     print("x:", globals()["x"])
     print("y:", globals()["y"])
