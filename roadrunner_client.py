@@ -46,6 +46,7 @@ class RoadRunnerClient:
            exportRequest.format_name = export_format_name
            api.Export(exportRequest)
 
+           print("exit")
            exitRequest = roadrunner_service_messages_pb2.ExitRequest()
            api.Exit(exitRequest)
 

@@ -42,7 +42,7 @@ def get_design_speed(type, topography, network_function):
         #return None
     
     else:
-        raise Exception("Unknown combination")
+        return 30
 
 
 

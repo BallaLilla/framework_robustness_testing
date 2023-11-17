@@ -1,6 +1,7 @@
 import subprocess
 import shutil
 import os
+import time
 
 IP_address = "127.0.0.1"
 port = "54321"
@@ -12,9 +13,8 @@ class RoadRunnerServer:
         print("self_proj_path: ", self.project_path)
         print("RoadRunner server init")
         
-        callString = self.installation_path + "/AppRoadRunner --apiPort " + port + " --projectPath " + self.project_path
+        callString = "AppRoadRunner --apiPort " + port + " --projectPath " + self.project_path
         print(callString)
-        server_is_started = subprocess.Popen(callString)
-        if server_is_started:
-            Exception("RoadRunner server cannot be strated")
-
+        self.process = subprocess.Popen(callString)
+        time.sleep(10)
+       

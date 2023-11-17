@@ -14,7 +14,7 @@ from carla_server import CARLAServer
 from carla_client import CARLAClient
 
 import mutation
-
+from analyzer import Analyzer
 import copy
 import time
 
@@ -28,13 +28,9 @@ def parse_arguments():
     return parser.parse_args()
 
 
-def create_output_folder(index):
-    test_cases_folder = os.path.relpath(os.path.join(os.path.dirname(__file__), "test_cases"))
-    if not os.path.exists(test_cases_folder):
-        os.makedirs(test_cases_folder)
-
-    network_folder_name = f"road_network_{index + 1}"
-    network_folder_path = os.path.join(test_cases_folder, network_folder_name)
+def create_output_folder(test_cases_folder_path, network_index):
+    network_folder_name = f"road_network_{network_index + 1}"
+    network_folder_path = os.path.join(test_cases_folder_path, network_folder_name)
 
     if os.path.exists(os.path.realpath(network_folder_path)):
         shutil.rmtree(network_folder_path)
@@ -61,13 +57,29 @@ if __name__ == "__main__":
     args = parse_arguments()
 
     settings = read_config_from_file(args.config_file)
+    concrete_network_generation_times = []
+
+    test_cases_folder_path = os.path.relpath(os.path.join(os.path.dirname(__file__), "test_cases"))
+    if os.path.exists(test_cases_folder_path):
+        shutil.rmtree(test_cases_folder_path)
+    os.makedirs(test_cases_folder_path)
 
     for index, road_network in enumerate(settings.road_networks):
-        network_folder_path = create_output_folder(index)
 
-        # Generate rrMap for original road network
+        network_folder_path = create_output_folder(test_cases_folder_path, index)
+
         parametrizeConcreteScenario(road_network, network_folder_path)
+
+        start_time = time.time()
         concrete_road_network = generate_concrete_road_network(network_folder_path + "/descriptor.xml")
+        end_time = time.time()
+        generation_time = end_time - start_time
+
+        segment_count = road_network.road_groups[0].segment_count
+        concrete_network_generation_times.append({"segment_count": segment_count, "generation_time": generation_time})
+
+
+
 
         if settings.scene_building.tool == "RoadRunner":
             generate_road_runner_hd_map(concrete_road_network, network_folder_path)
@@ -83,11 +95,11 @@ if __name__ == "__main__":
             carla_server = CARLAServer()
             carla_client = CARLAClient()
             carla_client._generate_opendrive_world(export_file_path + ".xodr")
+            carla_client.make_record(os.path.join(os.path.dirname(import_file_path), "record.log"))
             
 
         
         for i in range(len(road_network.mutation_groups)):
-            time.sleep(10)
             mutated_network = None
             mutated_network_path = create_mutation_output_folder(network_folder_path, mutation_group=i + 1)
             mutation_group = road_network.mutation_groups[i]
@@ -113,7 +125,15 @@ if __name__ == "__main__":
                                                         export_format_name=settings.scene_building.export_format)
 
                 if settings.simulator.simulator == "CARLA":
-                    carla_server = CARLAServer()
-                    carla_client = CARLAClient()
+                    #carla_server = CARLAServer()
+                    #carla_client = CARLAClient()
                     carla_client._generate_opendrive_world(export_file_path + ".xodr")
-                
+                    carla_client.make_record(os.path.join(os.path.dirname(import_file_path), "record.log"))
+    carla_client.close_Carla()
+
+    analyzer = Analyzer()
+    analyzer.analyze_concrete_road_network_generation_time_depending_segment_counts(concrete_network_generation_times)
+
+    
+
+      

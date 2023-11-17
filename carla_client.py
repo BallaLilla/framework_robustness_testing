@@ -35,10 +35,8 @@ class CARLAClient:
                             enable_mesh_visibility=True))
                         
                         settings = carla_world.get_settings()
-                        
-
-                        #client_carla_word = self.carla_client.get_world()
-                        #client_carla_word.apply_settings(settings) 
+                        client_carla_word = self.carla_client.get_world()
+                        client_carla_word.apply_settings(settings) 
                         print("Done")
                     except Exception as e:
                         print(e)
@@ -56,7 +54,13 @@ class CARLAClient:
                     pid = process.info['pid']
                     psutil.Process(pid).terminate()
                     print(f"{process.info['name']} (PID: {pid}) terminated successfully.")
+                    time.sleep(10)
         except Exception as e:
             print(f"Error terminating processes: {e}")
 
+    def make_record(self, file_path, duration=1):
+        self.carla_client.start_recorder(file_path)
+        time.sleep(duration)
+        self.carla_client.stop_recorder()
+    
 

@@ -12,7 +12,7 @@ class CARLAServer:
         if not is_carla_running:
             callString = self.exe_path + " -dx11"
             print(callString)
-            server_is_started = subprocess.Popen(callString)
-            time.sleep(15)
+            self.process  = subprocess.Popen(callString)
+            time.sleep(10)
         else:
             print("CarlaUE4.exe is already running. No need to start it again.")
