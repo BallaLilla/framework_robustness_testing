@@ -1,0 +1,103 @@
+{
+  "road_networks": [
+    {
+      "resolution": 10,
+      "initial_position_x": 0,
+      "initial_position_y": 0,
+      "initial_heading": 0,
+      "road_groups": [
+        {
+          "segment_count": 1,
+          "network_function": "a",
+          "topography": "A",
+          "type": "main",
+          "offset_from_ref_line": 0
+        }
+      ]
+    },
+    {
+      "resolution": 10,
+      "initial_position_x": 0,
+      "initial_position_y": 0,
+      "initial_heading": 0,
+      "road_groups": [
+        {
+          "segment_count": 2,
+          "network_function": "a",
+          "topography": "A",
+          "type": "main",
+          "offset_from_ref_line": 0
+        }
+      ]
+    },
+    {
+      "resolution": 10,
+      "initial_position_x": 0,
+      "initial_position_y": 0,
+      "initial_heading": 0,
+      "road_groups": [
+        {
+          "segment_count": 3,
+          "network_function": "a",
+          "topography": "A",
+          "type": "main",
+          "offset_from_ref_line": 0
+        }
+      ]
+    },
+    {
+      "resolution": 10,
+      "initial_position_x": 0,
+      "initial_position_y": 0,
+      "initial_heading": 0,
+      "road_groups": [
+        {
+          "segment_count": 4,
+          "network_function": "a",
+          "topography": "A",
+          "type": "main",
+          "offset_from_ref_line": 0
+        }
+      ]
+    },
+    {
+      "resolution": 10,
+      "initial_position_x": 0,
+      "initial_position_y": 0,
+      "initial_heading": 0,
+      "road_groups": [
+        {
+          "segment_count": 5,
+          "network_function": "a",
+          "topography": "A",
+          "type": "main",
+          "offset_from_ref_line": 0
+        }
+      ]
+    },
+    {
+      "resolution": 10,
+      "initial_position_x": 0,
+      "initial_position_y": 0,
+      "initial_heading": 0,
+
+      "road_groups": [
+        {
+          "segment_count": 6,
+          "network_function": "a",
+          "topography": "A",
+          "type": "main",
+          "offset_from_ref_line": 0
+        }
+      ]
+    }
+  ],
+  "scene_building": {
+    "tool": "RoadRunner",
+    "import_format": "RoadRunner HD Map",
+    "export_format": "CARLA"
+  },
+  "simulation": {
+    "simulator": "CARLA"
+  }
+}

@@ -83,7 +83,7 @@ if __name__ == "__main__":
 
         if settings.scene_building.tool == "RoadRunner":
             generate_road_runner_hd_map(concrete_road_network, network_folder_path)
-            roadrunner_server = RoadRunnerServer(project_path=os.path.dirname(__file__) + "/Server")
+            roadrunner_server = RoadRunnerServer(project_path=os.path.realpath(os.path.join(os.path.dirname(__file__), "Server")))
             import_file_path = os.path.realpath(network_folder_path + "/rrMap")
             export_file_path = os.path.realpath(network_folder_path + "/rrMap_exported")
             roadrunner_client = RoadRunnerClient(import_file_path=import_file_path,

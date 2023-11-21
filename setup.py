@@ -14,7 +14,7 @@ current_directory = current_directory.replace(os.sep, '/')
 proto_directory = r"C:\Program Files\RoadRunner R2023b\bin\win64\Proto"
 proto_directory = os.path.realpath(proto_directory).replace(os.sep, '/')
 directory = proto_directory + "/mathworks/"
-output_directory = current_directory + "/robustness_testing/map_generation"
+output_directory = current_directory
 
 if not os.path.isdir(output_directory) :
     os.mkdir(output_directory)
