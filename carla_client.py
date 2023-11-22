@@ -1,15 +1,14 @@
-import shutil
 import os
 import carla
-import subprocess
 import time
 import psutil
 
 
 class CARLAClient:
-    def __init__(self, ip_address="127.0.0.1", port=2000):
+    def __init__(self, ip_address="localhost", port=2000):
         self.carla_client = carla.Client(ip_address, port)
         self.carla_client.set_timeout(10)
+        
         
 
     def _generate_opendrive_world(self, xodr_path, vertex_distance=1, max_road_length=3000, wall_height=1, extra_width=0) :  
@@ -50,17 +49,22 @@ class CARLAClient:
     def close_Carla(self):
         try:
             for process in psutil.process_iter(['pid', 'name']):
-                if 'CarlaUE4' in process.info['name']:
-                    pid = process.info['pid']
-                    psutil.Process(pid).terminate()
-                    print(f"{process.info['name']} (PID: {pid}) terminated successfully.")
+                if 'Carla' in  process.info['name']:
+                    for proc in process.children(recursive=True):
+                        proc.kill()
+                    process.kill()
                     time.sleep(10)
         except Exception as e:
             print(f"Error terminating processes: {e}")
+            
+
 
     def make_record(self, file_path, duration=1):
         self.carla_client.start_recorder(file_path)
         time.sleep(duration)
         self.carla_client.stop_recorder()
+        
+
+        
     
 

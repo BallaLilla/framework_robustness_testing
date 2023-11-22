@@ -97,6 +97,7 @@ if __name__ == "__main__":
             carla_client = CARLAClient()
             carla_client._generate_opendrive_world(export_file_path + ".xodr")
             carla_client.make_record(os.path.join(os.path.dirname(import_file_path), "record.log"))
+                 
             
 
         
@@ -126,9 +127,15 @@ if __name__ == "__main__":
                                                         export_format_name=settings.scene_building.export_format)
 
                 if settings.simulator.simulator == "CARLA":
+                    carla_server = CARLAServer()
+                    carla_client = CARLAClient()
                     carla_client._generate_opendrive_world(export_file_path + ".xodr")
                     carla_client.make_record(os.path.join(os.path.dirname(import_file_path), "record.log"))
+                   
+        
+       
     carla_client.close_Carla()
+
 
     analyzer = Analyzer()
     analyzer.analyze_concrete_road_network_generation_time_depending_segment_counts(concrete_network_generation_times)

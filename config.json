@@ -1,0 +1,33 @@
+{
+  "road_networks": [
+    {
+      "resolution": 10,
+      "initial_position_x": 0,
+      "initial_position_y": 0,
+      "initial_heading": 0,
+      "segment_count": 1
+    },
+    {
+      "resolution": 10,
+      "initial_position_x": 0,
+      "initial_position_y": 0,
+      "initial_heading": 0,
+      "segment_count": 2
+    },
+    {
+      "resolution": 10,
+      "initial_position_x": 0,
+      "initial_position_y": 0,
+      "initial_heading": 0,
+      "segment_count": 3
+    }
+  ],
+  "scene_building": {
+    "tool": "RoadRunner",
+    "import_format": "RoadRunner HD Map",
+    "export_format": "CARLA"
+  },
+  "simulation": {
+    "simulator": "CARLA"
+  }
+}
