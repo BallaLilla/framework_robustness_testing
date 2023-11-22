@@ -5,91 +5,42 @@
       "initial_position_x": 0,
       "initial_position_y": 0,
       "initial_heading": 0,
-      "road_groups": [
-        {
-          "segment_count": 1,
-          "network_function": "a",
-          "topography": "A",
-          "type": "main",
-          "offset_from_ref_line": 0
-        }
-      ]
+      "segment_count": 1
     },
     {
       "resolution": 10,
       "initial_position_x": 0,
       "initial_position_y": 0,
       "initial_heading": 0,
-      "road_groups": [
-        {
-          "segment_count": 2,
-          "network_function": "a",
-          "topography": "A",
-          "type": "main",
-          "offset_from_ref_line": 0
-        }
-      ]
+      "segment_count": 2
     },
     {
       "resolution": 10,
       "initial_position_x": 0,
       "initial_position_y": 0,
       "initial_heading": 0,
-      "road_groups": [
-        {
-          "segment_count": 3,
-          "network_function": "a",
-          "topography": "A",
-          "type": "main",
-          "offset_from_ref_line": 0
-        }
-      ]
+      "segment_count": 3
     },
     {
       "resolution": 10,
       "initial_position_x": 0,
       "initial_position_y": 0,
       "initial_heading": 0,
-      "road_groups": [
-        {
-          "segment_count": 4,
-          "network_function": "a",
-          "topography": "A",
-          "type": "main",
-          "offset_from_ref_line": 0
-        }
-      ]
+      "segment_count": 4
     },
     {
       "resolution": 10,
       "initial_position_x": 0,
       "initial_position_y": 0,
       "initial_heading": 0,
-      "road_groups": [
-        {
-          "segment_count": 5,
-          "network_function": "a",
-          "topography": "A",
-          "type": "main",
-          "offset_from_ref_line": 0
-        }
-      ]
+      "segment_count": 5
     },
     {
       "resolution": 10,
       "initial_position_x": 0,
       "initial_position_y": 0,
       "initial_heading": 0,
-
-      "road_groups": [
-        {
-          "segment_count": 6,
-          "network_function": "a",
-          "topography": "A",
-          "type": "main",
-          "offset_from_ref_line": 0
-        }
-      ]
+      "segment_count": 6
     }
   ],
   "scene_building": {

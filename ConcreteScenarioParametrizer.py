@@ -87,7 +87,7 @@ def choose_segment_type():
     return random.choice(segment_types)
 
 def random_angle():
-    return random.uniform(1.0, 180.0)
+    return random.uniform(3.0, 180.0)
 
 def get_lane_number_per_section(network_function):
     if network_function == "a":
@@ -135,13 +135,15 @@ def parametrizeConcreteScenario(network_setting, output_folder_path):
     tree = ET.ElementTree(road_network)
 
     # TODO: later will be modified when several road groups will be handled
-    first_road_group = network_setting.road_groups[0]
+    category = "main"
+    network_function = "a"
+    topography = "A"
     traffic_rule = "RHT"
 
     
-    design_speed = get_design_speed(type=first_road_group.type, topography=first_road_group.topography, network_function=first_road_group.network_function)
-    for i in range(first_road_group.segment_count):
-        road_element = ET.SubElement(road_network, "road", type=first_road_group.type, traffic_rule=traffic_rule)
+    design_speed = get_design_speed(type=category, topography=topography, network_function=network_function)
+    for i in range(network_setting.segment_count):
+        road_element = ET.SubElement(road_network, "road", type=category, traffic_rule=traffic_rule)
         geometry_type = choose_segment_type()
         print("i: ", i)
         print("type: ", geometry_type)
@@ -156,7 +158,7 @@ def parametrizeConcreteScenario(network_setting, output_folder_path):
             geometry_element = ET.SubElement(road_element, "geometry", type=geometry_type, length=str(length))
         lanes_element = ET.SubElement(road_element, "lanes")
         right_lane_section = ET.SubElement(lanes_element, "right_section")
-        right_lane_number = get_lane_number_per_section(first_road_group.network_function)
+        right_lane_number = get_lane_number_per_section(network_function)
         for i in range(right_lane_number):
             lane_type = get_lane_type("right")
             lane_width = get_lane_width(lane_type)
@@ -176,7 +178,7 @@ def parametrizeConcreteScenario(network_setting, output_folder_path):
             lane_marking_type = choose_random_lane_marking()
             lane_marking_element = ET.SubElement(lane_element, "lane_marking", position="left" ,type=lane_marking_type)
         left_lane_section = ET.SubElement(lanes_element, "left_section")
-        left_lane_number = get_lane_number_per_section(first_road_group.network_function)
+        left_lane_number = get_lane_number_per_section(network_function)
         for i in range(left_lane_number):
             lane_type = get_lane_type("left")
             lane_width = get_lane_width(lane_type)

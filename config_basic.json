@@ -5,15 +5,8 @@
       "initial_position_x": 0,
       "initial_position_y": 0,
       "initial_heading": 0,
-      "road_groups": [
-        {
-          "segment_count": 1,
-          "network_function": "a",
-          "topography": "A",
-          "type": "main",
-          "offset_from_ref_line": 0
-        }
-      ]
+      "segment_count": 1,
+      "format":"RoadRunner HD Map"
     }
   ],
   "scene_building": {

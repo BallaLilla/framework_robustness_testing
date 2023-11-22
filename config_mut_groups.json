@@ -5,6 +5,7 @@
       "initial_position_x": 0,
       "initial_position_y": 0,
       "initial_heading": 0,
+      "segment_count": 1,
       "mutation_groups": [
         {
           "mutation_group_id": "group_1",
@@ -12,7 +13,7 @@
             {
               "type": "laneMarkingReplacer",
               "id": "Road0_Lane0___Road0_Lane1 boundary_marking",
-			  "new_type":"DashedShortSingleYellow"
+			        "new_type":"DashedShortSingleYellow"
             }
           ]
         },
@@ -22,18 +23,9 @@
             {
               "type": "laneMarkingReplacer",
               "id": "Road0_Lane-1___Road0_Lane0 boundary_marking",
-			  "new_type":"DashedShortSingleYellow"
+			        "new_type":"DashedShortSingleYellow"
             }
           ]
-        }
-      ],
-      "road_groups": [
-        {
-          "segment_count": 1,
-          "network_function": "a",
-          "topography": "A",
-          "type": "main",
-          "offset_from_ref_line": 0
         }
       ]
     }
