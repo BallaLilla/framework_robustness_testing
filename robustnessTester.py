@@ -59,14 +59,14 @@ if __name__ == "__main__":
     settings = read_config_from_file(args.config_file)
     concrete_network_generation_times = []
 
-    test_cases_folder_path = os.path.relpath(os.path.join(os.path.dirname(__file__), "test_cases"))
-    if os.path.exists(test_cases_folder_path):
-        shutil.rmtree(test_cases_folder_path)
-    os.makedirs(test_cases_folder_path)
+    test_input_folder_path = os.path.relpath(os.path.join(os.path.dirname(__file__), "test_input"))
+    if os.path.exists(test_input_folder_path):
+        shutil.rmtree(test_input_folder_path)
+    os.makedirs(test_input_folder_path)
 
     for index, road_network in enumerate(settings.road_networks):
 
-        network_folder_path = create_output_folder(test_cases_folder_path, index)
+        network_folder_path = create_output_folder(test_input_folder_path, index)
 
         parametrizeConcreteScenario(road_network, network_folder_path)
 
