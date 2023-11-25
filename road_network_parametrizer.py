@@ -126,7 +126,7 @@ def choose_random_lane_marking():
 
 
 
-def parametrizeConcreteScenario(network_setting, output_folder_path):
+def parametrize_road_netork(network_setting, output_folder_path):
     road_network = ET.Element("road_network", x=str(network_setting.initial_position_x),
                                              y=str(network_setting.initial_position_y),
                                              hdg=str(network_setting.initial_heading),
