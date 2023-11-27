@@ -34,7 +34,7 @@ class CARLASimulator(Simulator):
             for carla_child_process in carla_parent_process.children(recursive=True):
                 carla_child_process.terminate()
             self.process.terminate()
-            self.process.wait()  # Wait for the process to complete termination
+            self.process.wait()
             print('CARLA has been closed.')
         else:
             print("CARLA is not running")
@@ -60,9 +60,9 @@ class CARLASimulator(Simulator):
         self.connect_client_to_server()
 
 
-    def make_record(self, file_path, duration=1):
+    def make_record(self, log_path, duration=1):
         print('Making record.....')
-        self.carla_client.start_recorder(file_path, duration)
+        self.carla_client.start_recorder(log_path, duration)
         self.carla_client.stop_recorder()
         
 

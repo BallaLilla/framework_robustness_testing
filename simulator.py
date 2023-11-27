@@ -7,11 +7,11 @@ class Simulator(ABC):
         pass
 
     @abstractmethod
-    def make_record(self):
+    def make_record(self, log_path, duration):
         pass
 
     @abstractmethod
-    def load_scene(self):
+    def load_scene(self, scene_path):
         pass
 
     @abstractmethod

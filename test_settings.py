@@ -30,15 +30,15 @@ class SceneBuilding:
         self.import_format = import_format
         self.export_format = export_format
 
-class Simulator:
+class Simulation:
     def __init__(self, simulator="CARLA"):
         self.simulator = simulator
 
 class Config:
-    def __init__(self, road_networks, scene_building, simulator):
+    def __init__(self, road_networks, scene_building, simulation):
         self.road_networks = road_networks
         self.scene_building = scene_building
-        self.simulator = simulator
+        self.simulation = simulation
 
 def json_to_config(json_data):
     road_networks_data = json_data.get("road_networks", [])
@@ -68,9 +68,9 @@ def json_to_config(json_data):
     scene_building = SceneBuilding(**scene_building_data)
 
     simulator_data = json_data.get("simulation", {})
-    simulator = Simulator(**simulator_data)
+    simulation = Simulation(**simulator_data)
 
-    return Config(road_networks, scene_building, simulator)
+    return Config(road_networks, scene_building, simulation)
 
 def read_config_from_file(file_path):
     with open(file_path, 'r') as file:

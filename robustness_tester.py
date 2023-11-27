@@ -55,11 +55,9 @@ if __name__ == "__main__":
     os.makedirs(test_input_folder_path)
 
     simulator = None
-    if settings.simulator.simulator == "CARLA":
+    if settings.simulation.simulator == "CARLA":
             simulator = CARLASimulator()
-            simulator.prepare_simulation()
-
-
+    simulator.prepare_simulation()
 
     for index, road_network in enumerate(settings.road_networks):
         road_network_folder_path = create_output_folder(test_input_folder_path, index)
@@ -80,12 +78,11 @@ if __name__ == "__main__":
                                                  export_file_path=export_file_path,
                                                  export_format_name=settings.scene_building.export_format)
 
-        if settings.simulator.simulator == "CARLA":
-            #simulator = CARLASimulator()
-            #simulator.prepare_simulation()
-            simulator.load_scene(export_file_path + ".xodr")
-            simulator.make_record(os.path.join(os.path.dirname(import_file_path), "record.log"))
-            #simulator.stop()
+       
+        #simulator.prepare_simulation()
+        simulator.load_scene(export_file_path + ".xodr")
+        simulator.make_record(os.path.join(os.path.dirname(import_file_path), "record.log"))
+        #simulator.stop()
             
         
         for i in range(len(road_network.mutation_groups)):
@@ -113,12 +110,10 @@ if __name__ == "__main__":
                                                         export_file_path=export_file_path,
                                                         export_format_name=settings.scene_building.export_format)
 
-                if settings.simulator.simulator == "CARLA":
-                    #simulator = CARLASimulator()
-                    #simulator.prepare_simulation()
-                    simulator.load_scene(export_file_path + ".xodr")
-                    simulator.make_record(os.path.join(os.path.dirname(import_file_path), "record.log"))
-                    #simulator.stop()
+                
+                #simulator.prepare_simulation()
+                simulator.load_scene(export_file_path + ".xodr")
+                simulator.make_record(os.path.join(os.path.dirname(import_file_path), "record.log"))
     simulator.stop()
 
     
