@@ -45,14 +45,8 @@ def json_to_config(json_data):
     road_networks = []
 
     for road_network_data in road_networks_data:
-
-        road_network = RoadNetwork(resolution=road_network_data.get("resolution"),
-                                   initial_position_x=road_network_data.get("initial_position_x"),
-                                   initial_position_y=road_network_data.get("initial_position_y"),
-                                   initial_heading=road_network_data.get("initial_heading"),
-                                   segment_count=road_network_data.get("segment_count"),
-                                   format=road_network_data.get("format"))
-       
+        road_network = RoadNetwork(**road_network_data)
+        
         mutation_groups = road_network_data.get("mutation_groups", [])
         for mutation_group_data in mutation_groups:
             mutation_group_id = mutation_group_data.get("mutation_group_id", "")

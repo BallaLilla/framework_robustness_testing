@@ -55,7 +55,7 @@ if __name__ == "__main__":
         road_network_folder_path = create_output_folder(test_input_folder_path, index)
         parametrize_road_netork(road_network, road_network_folder_path)
         concrete_road_network = generate_concrete_road_network(road_network_folder_path + "/descriptor.xml")
-
+        
         if road_network.format == "RoadRunner HD Map":
             generate_roadrunner_hd_map(concrete_road_network, road_network_folder_path)
 
