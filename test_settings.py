@@ -51,7 +51,7 @@ def json_to_config(json_data):
                                    initial_position_y=road_network_data.get("initial_position_y"),
                                    initial_heading=road_network_data.get("initial_heading"),
                                    segment_count=road_network_data.get("segment_count"),
-                                   format=road_network_data.get("format", "RoadRunner HD Map"))
+                                   format=road_network_data.get("format"))
        
         mutation_groups = road_network_data.get("mutation_groups", [])
         for mutation_group_data in mutation_groups:

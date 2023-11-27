@@ -8,7 +8,7 @@
 	
 mindegyikre egy bekezdést szánnék -> összesen 1-1,5 oldal
 
-2) Előismeretek  7 oldal
+2) Előismeretek  2-3 oldal
 	2.1 ADAS funkcionális áttekintése --> 1-2 bekezdés
 	2.2 Mesterséges intelligencia komponens --> 2 bekezdés
 		önvezető járművekben szerep
@@ -50,9 +50,9 @@ mindegyikre egy bekezdést szánnék -> összesen 1-1,5 oldal
 		4.2.4 scene builder ábra + magyarázat
 		4.2.5 szimulátor ábra + magyarázat
 
-5.) Kiértékelés: 4 oldal
+5.) Kiértékelés: 6 oldal
 
-6.) Összefoglalás és fejlesztési javaslatok:
+6.) Összefoglalás és fejlesztési javaslatok (összesen 1 olda)
 	6.1) Összefoglalás 1 oldal
 	6.2) fejlesztési javaslatok 1 oldal
 	
