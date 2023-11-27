@@ -15,16 +15,6 @@
       "segment_count": 2,
       "mutation_groups": [
         {
-          "mutation_group_id": "group_1",
-          "mutations": [
-            {
-              "type": "laneMarkingReplacer",
-              "id": "Road0_Lane0___Road0_Lane1 boundary_marking",
-			        "new_type":"DashedShortSingleYellow"
-            }
-          ]
-        },
-        {
           "mutation_group_id": "group_2",
           "mutations": [
             {
@@ -35,13 +25,6 @@
           ]
         }
       ]
-    },
-    {
-    "resolution": 10,
-    "initial_position_x": 0,
-      "initial_position_y": 0,
-      "initial_heading": 0,
-      "segment_count": 3
     }
   ],
   "scene_building": {

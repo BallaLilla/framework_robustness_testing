@@ -45,7 +45,7 @@ class CARLASimulator(Simulator):
             call_string = f"{self.exe_path} -dx11 -carla-server"
             print(call_string)
             self.process = subprocess.Popen(call_string, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            #time.sleep(self.timeout)
+            time.sleep(self.timeout)
         else:
             print("CarlaUE4.exe is already running. No need to start it again.")
 
