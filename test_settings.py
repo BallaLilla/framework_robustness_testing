@@ -25,7 +25,7 @@ class RoadNetwork:
         self.mutation_groups.append(mutation_group)
 
 class SceneBuilding:
-    def __init__(self, tool="RoadRunner", import_format="RoadRunner HD Map", export_format="CARLA"):
+    def __init__(self, tool="RoadRunner Scene Builder", import_format="RoadRunner HD Map", export_format="CARLA"):
         self.tool = tool
         self.import_format = import_format
         self.export_format = export_format
@@ -45,7 +45,15 @@ def json_to_config(json_data):
     road_networks = []
 
     for road_network_data in road_networks_data:
-        road_network = RoadNetwork(**road_network_data)
+        resolution = road_network_data.get("resolution")
+        segment_count = road_network_data.get("segment_count")
+        initial_pos_x = road_network_data.get("initial_position_x", 0)
+        initial_pos_y = road_network_data.get("initial_position_y", 0)
+        initial_heading = road_network_data.get("initial_heading", 0)
+        road_network_format = road_network_data.get("format", "RoadRunner HD Map")
+
+        road_network = RoadNetwork(resolution=resolution, segment_count=segment_count, initial_position_x=initial_pos_x,
+                                   initial_position_y=initial_pos_y, initial_heading=initial_heading, format=road_network_format)
         
         mutation_groups = road_network_data.get("mutation_groups", [])
         for mutation_group_data in mutation_groups:

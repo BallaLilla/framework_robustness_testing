@@ -10,7 +10,7 @@
     }
   ],
   "scene_building": {
-    "tool": "RoadRunner",
+    "tool": "RoadRunner Scene Builder",
     "import_format": "RoadRunner HD Map",
     "export_format": "CARLA"
   },
