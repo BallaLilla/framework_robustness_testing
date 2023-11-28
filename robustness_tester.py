@@ -7,14 +7,13 @@ from test_settings import read_config_from_file
 from road_network_parametrizer import parametrize_road_netork
 from concrete_road_network_generator import generate_concrete_road_network
 from roadrunner_hd_map_adapter import generate_roadrunner_hd_map
-from roadrunner_server import RoadRunnerServer
-from roadrunner_client import RoadRunnerClient
+
+
+from roadrunner_scene_builder import RoadRunnerSceneBuilder
 
 import mutation as mutation
 
 from carla_simulator import CARLASimulator
-#from carla_server import CARLAServer
-#from carla_client import CARLAClient
 
 
 def parse_arguments():
@@ -69,14 +68,17 @@ if __name__ == "__main__":
 
 
         if settings.scene_building.tool == "RoadRunner Scene Builder":
-            
-            roadrunner_server = RoadRunnerServer(project_path=os.path.realpath(os.path.join(os.path.dirname(__file__), "Server")))
-            import_file_path = os.path.realpath(road_network_folder_path + "/rrMap")
-            export_file_path = os.path.realpath(road_network_folder_path + "/rrMap_exported")
-            roadrunner_client = RoadRunnerClient(import_file_path=import_file_path,
-                                                 import_format_name=settings.scene_building.import_format,
-                                                 export_file_path=export_file_path,
-                                                 export_format_name=settings.scene_building.export_format)
+            scene_builder = RoadRunnerSceneBuilder()
+            scene_builder.prepare()
+
+            project_path = os.path.realpath(os.path.join(os.path.dirname(__file__), "RoadRunnerProject"))
+            import_file_path = os.path.realpath(road_network_folder_path + "/road_network")
+            import_format_name=settings.scene_building.import_format
+            export_file_path = os.path.realpath(road_network_folder_path + "/scene")
+            export_format_name=settings.scene_building.export_format
+            scene_builder.build_scene(project_path=project_path, import_file_path=import_file_path,
+                                      import_format_name=import_format_name, export_file_path=export_file_path,
+                                      export_format_name=export_format_name)
 
        
         #simulator.prepare_simulation()
@@ -101,14 +103,17 @@ if __name__ == "__main__":
                     
 
                 if settings.scene_building.tool == "RoadRunner Scene Builder":
-                    generate_roadrunner_hd_map(mutated_network, mutated_network_path)
-                    roadrunner_server = RoadRunnerServer(project_path=os.path.realpath(os.path.join(os.path.dirname(__file__), "Server")))
-                    import_file_path = os.path.realpath(mutated_network_path + "/rrMap")
-                    export_file_path = os.path.realpath(mutated_network_path + "/rrMap_exported")
-                    roadrunner_client = RoadRunnerClient(import_file_path=import_file_path,
-                                                        import_format_name=settings.scene_building.import_format,
-                                                        export_file_path=export_file_path,
-                                                        export_format_name=settings.scene_building.export_format)
+                    scene_builder = RoadRunnerSceneBuilder()
+                    scene_builder.prepare()
+
+                    project_path = os.path.realpath(os.path.join(os.path.dirname(__file__), "RoadRunnerProject"))
+                    import_file_path = os.path.realpath(road_network_folder_path + "/road_network")
+                    import_format_name=settings.scene_building.import_format
+                    export_file_path = os.path.realpath(road_network_folder_path + "/scene")
+                    export_format_name=settings.scene_building.export_format
+                    scene_builder.build_scene(project_path=project_path, import_file_path=import_file_path,
+                                            import_format_name=import_format_name, export_file_path=export_file_path,
+                                            export_format_name=export_format_name)
 
                 
                 #simulator.prepare_simulation()

@@ -37,22 +37,3 @@ add_entries(directory + "scenario/simulation/")
 args = "\"" + sys.executable.replace(os.sep, '/') + "\" -m grpc_tools.protoc --proto_path=\"" + proto_directory + "\" --python_out=\"" + output_directory + "\" --grpc_python_out=\"" + output_directory + "\""
 args = args + file_paths
 subprocess.run(args)
-
-library_init_file = output_directory + "/__init__.py"
-
-if os.path.exists(library_init_file) :
-    os.remove(library_init_file)
-
-python_files = glob.glob(output_directory + "/**/*.py", recursive=True)
-    
-f = open(library_init_file, "a")
-f.write("""import sys
-import os
-sys.path.append(os.path.dirname(os.path.realpath(__file__)))
-""")
-
-for file in python_files : 
-    file = os.path.relpath(file, start = output_directory)
-    file = os.path.splitext(file)[0]
-    file = file.replace(os.sep, '.')
-    f.write("from {} import *".format(file) + "\n")

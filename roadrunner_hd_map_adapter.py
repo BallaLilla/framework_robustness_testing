@@ -155,7 +155,7 @@ def generate_roadrunner_hd_map(road_network, output_folder_path):
     headerMessage = hd_map_header_pb2.Header()
     headerMessage.projection.projection = 'PROJCS["WGS 84 / Transverse Mercator",GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",0],PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1],AXIS["Easting",EAST],AXIS["Northing",NORTH]]'
     
-    filepath = output_folder_path  + "/rrMap.rrhd"
+    filepath = output_folder_path  + "/road_network.rrhd"
     WriteToRRHD(filepath, headerMessage, rrMap)
 
     print("------HD_map------")

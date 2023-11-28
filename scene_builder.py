@@ -6,4 +6,7 @@ class SceneBuilder(ABC):
     def build_scene(self):
         pass
 
+    @abstractmethod
+    def prepare(self):
+        pass
 
