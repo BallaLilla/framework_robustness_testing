@@ -6,8 +6,8 @@ import copy
 from test_settings import read_config_from_file
 from road_network_parametrizer import parametrize_road_netork
 from concrete_road_network_generator import generate_concrete_road_network
-from roadrunner_hd_map_adapter import generate_roadrunner_hd_map
 
+from roadrunner_hd_map_converter import RoadRunnerHDMapConverter
 
 from roadrunner_scene_builder import RoadRunnerSceneBuilder
 
@@ -59,12 +59,14 @@ if __name__ == "__main__":
     simulator.prepare_simulation()
 
     for index, road_network in enumerate(settings.road_networks):
+        converter = None
         road_network_folder_path = create_output_folder(test_input_folder_path, index)
         parametrize_road_netork(road_network, road_network_folder_path)
         concrete_road_network = generate_concrete_road_network(road_network_folder_path + "/descriptor.xml")
         
         if road_network.format == "RoadRunner HD Map":
-            generate_roadrunner_hd_map(concrete_road_network, road_network_folder_path)
+            converter = RoadRunnerHDMapConverter()
+            converter.convert_road_network_to_specified_format(concrete_road_network, road_network_folder_path)
 
 
         if settings.scene_building.tool == "RoadRunner Scene Builder":
@@ -80,11 +82,11 @@ if __name__ == "__main__":
                                       import_format_name=import_format_name, export_file_path=export_file_path,
                                       export_format_name=export_format_name)
 
-       
-        #simulator.prepare_simulation()
-        simulator.load_scene(export_file_path + ".xodr")
-        simulator.make_record(os.path.join(os.path.dirname(import_file_path), "record.log"))
-        #simulator.stop()
+        if settings.simulation.simulator == "CARLA":
+            #simulator.prepare_simulation()
+            simulator.load_scene(export_file_path + ".xodr")
+            simulator.make_record(os.path.join(os.path.dirname(import_file_path), "record.log"))
+            #simulator.stop()
             
         
         for i in range(len(road_network.mutation_groups)):
@@ -115,10 +117,10 @@ if __name__ == "__main__":
                                             import_format_name=import_format_name, export_file_path=export_file_path,
                                             export_format_name=export_format_name)
 
-                
-                #simulator.prepare_simulation()
-                simulator.load_scene(export_file_path + ".xodr")
-                simulator.make_record(os.path.join(os.path.dirname(import_file_path), "record.log"))
+                if settings.simulation.simulator == "CARLA":
+                    #simulator.prepare_simulation()
+                    simulator.load_scene(export_file_path + ".xodr")
+                    simulator.make_record(os.path.join(os.path.dirname(import_file_path), "record.log"))
     simulator.stop()
 
     

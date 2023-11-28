@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-class Adapter(ABC):
+class Converter(ABC):
     @abstractmethod
     def processMultiLineSegmentList(self, multilinestrings, settable):
         pass
@@ -12,3 +12,9 @@ class Adapter(ABC):
     @abstractmethod
     def processTravelDir(self, travelDir, settable):
         pass
+
+    @abstractmethod
+    def convert_road_network_to_specified_format(self, road_network, output_folder_path):
+        pass
+
+
