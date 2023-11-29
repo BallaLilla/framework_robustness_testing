@@ -5,10 +5,10 @@
       "initial_position_x": 0,
       "initial_position_y": 0,
       "initial_heading": 0,
-      "segment_count": 1,
-      "format":"RoadRunner HD Map"
+      "segment_count": 1
     }
   ],
+  "format": "RoadRunner HD Map",
   "scene_building": {
     "tool": "RoadRunner Scene Builder",
     "import_format": "RoadRunner HD Map",
