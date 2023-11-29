@@ -1,77 +1,58 @@
 import subprocess
 import sys
-import shutil
-import grpc
-import mathworks.roadrunner.roadrunner_service_messages_pb2 as roadrunner_service_messages_pb2
-import mathworks.roadrunner.roadrunner_service_pb2_grpc as roadrunner_service_pb2_grpc
 import os
-import time
 
 from scene_builder import SceneBuilder
 
+from roadrunner_server import RoadRunnerServer
+from roadrunner_client import RoadRunnerClient
+
 
 class RoadRunnerSceneBuilder(SceneBuilder):
+    def __init__(self):
+         self.roadrunner_server = None
+         self.roadrunner_client = None
        
-       
-    def build_scene(self, project_path, import_file_path, import_format_name, export_file_path, export_format_name):
-        with grpc.insecure_channel("localhost: " + str(self.server_api_port)) as channel:
-           api = roadrunner_service_pb2_grpc.RoadRunnerServiceStub(channel)
+    
+    def load_project(self, project_path):
+        self.roadrunner_client.load_project(project_path=project_path)
 
-           # create new project
-           print("Load project")
-           loadProjectRequest = roadrunner_service_messages_pb2.LoadProjectRequest()
-           loadProjectRequest.folder_path =  project_path
-           api.LoadProject(loadProjectRequest)
+    def create_new_scene(self):
+        self.roadrunner_client.create_new_scene()
+    
 
-           # create new scene
-           print("New scene creation")
-           newSceneRequest = roadrunner_service_messages_pb2.NewSceneRequest()
-           api.NewScene(newSceneRequest)
-           
-           
-           # import file into scene
-           print("Import")
-           importRequest = roadrunner_service_messages_pb2.ImportRequest()
-           importRequest.file_path = import_file_path
-           importRequest.format_name = import_format_name
-           api.Import(importRequest)
+    def import_(self, import_file_path, import_format_name):
+        self.roadrunner_client.import_(import_file_path=import_file_path, import_format_name=import_format_name)
 
-           # export scene
-           print("export")
-           exportRequest = roadrunner_service_messages_pb2.ExportRequest()
-           exportRequest.file_path = export_file_path
-           exportRequest.format_name = export_format_name
-           api.Export(exportRequest)
+    
+    def export(self, export_file_path, export_format_name):
+        self.roadrunner_client.export(export_file_path=export_file_path, export_format_name=export_format_name)
+    
+    def exit(self):
+        self.roadrunner_client.exit()     
 
-           print("exit")
-           exitRequest = roadrunner_service_messages_pb2.ExitRequest()
-           api.Exit(exitRequest)
 
     def prepare(self):
         self.compile_proto_files()
         self.start_server()
+        self.client_connect_to_server()
 
 
     
-    def start_server(self, project_path=None, api_port=54321):
-        self.server_api_port = api_port
+    def start_server(self, project_path=None, api_port=54321, timeout=10):
         if project_path is None:
             project_path = os.path.realpath(os.path.join(os.path.dirname(__file__), "RoadRunnerProject"))
-        self.project_path = project_path
-        callString = "AppRoadRunner --apiPort " + str(api_port) + " --projectPath " + project_path
-        print(callString)
-        self.process = subprocess.Popen(callString)
-        time.sleep(10)
+        self.roadrunner_server = RoadRunnerServer(project_path=project_path, api_port=api_port, timeout=timeout)
 
+    
+    def client_connect_to_server(self):
+        self.roadrunner_client = RoadRunnerClient("localhost", self.roadrunner_server.api_port)
 
     
     def compile_proto_files(self):
-        process = subprocess.Popen("python roadrunner_setup.py", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process = subprocess.Popen("python roadrunner_setup.py", stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         return_code = process.wait()
         output, error = process.communicate()
         if error:
             print(error)
             sys.exit(1)
-
-
-
