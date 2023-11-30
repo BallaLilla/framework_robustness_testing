@@ -14,8 +14,8 @@ class RoadRunnerSceneBuilder(SceneBuilder):
          self.roadrunner_client = None
        
     
-    def load_project(self, project_path):
-        self.roadrunner_client.load_project(project_path=project_path)
+    def load_project(self):
+        self.roadrunner_client.load_project(project_path=self.roadrunner_server.project_path)
 
     def create_new_scene(self):
         self.roadrunner_client.create_new_scene()
@@ -36,6 +36,8 @@ class RoadRunnerSceneBuilder(SceneBuilder):
         self.compile_proto_files()
         self.start_server()
         self.client_connect_to_server()
+        self.load_project()
+        self.create_new_scene()
 
 
     

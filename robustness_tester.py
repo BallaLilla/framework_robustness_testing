@@ -52,8 +52,6 @@ def build_scene(scene_building_settings, road_network_file_path):
         scene_builder = RoadRunnerSceneBuilder()
         project_path = os.path.realpath(os.path.join(os.path.dirname(__file__), "RoadRunnerProject"))
     scene_builder.prepare()
-    scene_builder.load_project(project_path=project_path)
-    scene_builder.create_new_scene()
     scene_builder.import_(import_file_path=import_file_path, import_format_name=import_format_name)
     scene_builder.build()
     scene_builder.export(export_file_path=export_file_path, export_format_name=export_format_name)
