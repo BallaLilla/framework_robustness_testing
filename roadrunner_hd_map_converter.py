@@ -172,3 +172,5 @@ class RoadRunnerHDMapConverter(Converter):
         print("------lane_markings--------")
         for laneMarking in rrMap.lane_markings:
             print("\n\nid: ", laneMarking.id)
+        
+        return filepath

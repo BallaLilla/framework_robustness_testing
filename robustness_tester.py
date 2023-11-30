@@ -41,6 +41,43 @@ def create_mutation_output_folder(road_network_folder_path, mutation_group):
     return mutation_group_folder_path
 
 
+def build_scene(scene_building_settings, road_network_file_path):
+    scene_builder = None
+    import_file_path = os.path.realpath(road_network_file_path)
+    print("import_path: ", import_file_path)
+    import_format_name=scene_building_settings.import_format
+    export_format_name=scene_building_settings.export_format
+    export_file_path = os.path.realpath(os.path.dirname(road_network_file_path) + "/road_network")
+    if scene_building_settings.tool == "RoadRunner Scene Builder":
+        scene_builder = RoadRunnerSceneBuilder()
+        project_path = os.path.realpath(os.path.join(os.path.dirname(__file__), "RoadRunnerProject"))
+    scene_builder.prepare()
+    scene_builder.load_project(project_path=project_path)
+    scene_builder.create_new_scene()
+    scene_builder.import_(import_file_path=import_file_path, import_format_name=import_format_name)
+    scene_builder.build()
+    scene_builder.export(export_file_path=export_file_path, export_format_name=export_format_name)
+    scene_builder.exit()
+    print("export_file_path", export_file_path)
+    return export_file_path
+
+    
+
+
+def simulate(scene_path, simulation_settings):
+    print("sim_scene_path", scene_path)
+    simulator = None
+    if simulation_settings.simulator == "CARLA":
+        simulator = CARLASimulator()
+    simulator.prepare_simulation()
+    log_path = os.path.join(os.path.dirname(scene_path), "record")
+    simulator.load_scene(scene_path=scene_path)
+    simulator.make_record(log_path=log_path, duration=1)
+    simulator.stop()
+
+
+
+
 
 
 
@@ -58,43 +95,19 @@ if __name__ == "__main__":
     if settings.road_network_format == "RoadRunner HD Map":
             converter = RoadRunnerHDMapConverter()
             
-    simulator = None
-    if settings.simulation.simulator == "CARLA":
-            simulator = CARLASimulator()
-    simulator.prepare_simulation()
-
-    
     for index, road_network in enumerate(settings.road_networks):
         road_network_folder_path = create_output_folder(test_input_folder_path, index)
         parametrize_road_netork(road_network, road_network_folder_path)
         concrete_road_network = generate_concrete_road_network(road_network_folder_path + "/descriptor.xml")
         
-        converter.convert_road_network_to_specified_format(concrete_road_network, road_network_folder_path)
+        concrete_road_network_file_path = converter.convert_road_network_to_specified_format(concrete_road_network, road_network_folder_path)
+        print("concrete_road_network_file_path: ", concrete_road_network_file_path)
+
+        scene_path = build_scene(scene_building_settings=settings.scene_building, road_network_file_path=concrete_road_network_file_path)
+
+        simulate(scene_path=scene_path, simulation_settings=settings.simulation)
 
 
-        if settings.scene_building.tool == "RoadRunner Scene Builder":
-            scene_builder = RoadRunnerSceneBuilder()
-            scene_builder.prepare()
-
-            project_path = os.path.realpath(os.path.join(os.path.dirname(__file__), "RoadRunnerProject"))
-            import_file_path = os.path.realpath(road_network_folder_path + "/road_network")
-            import_format_name=settings.scene_building.import_format
-            export_file_path = os.path.realpath(road_network_folder_path + "/scene")
-            export_format_name=settings.scene_building.export_format
-            
-            scene_builder.load_project(project_path=project_path)
-            scene_builder.create_new_scene()
-            scene_builder.import_(import_file_path=import_file_path, import_format_name=import_format_name)
-            scene_builder.export(export_file_path=export_file_path, export_format_name=export_format_name)
-            scene_builder.exit()
-
-        if settings.simulation.simulator == "CARLA":
-            scene_path = export_file_path + ".xodr"
-            log_path = os.path.join(os.path.dirname(import_file_path), "record.log")
-            simulator.load_scene(scene_path=scene_path)
-            simulator.make_record(log_path=log_path, duration=1)
-    
-        
         for i in range(len(road_network.mutation_groups)):
             mutated_network = None
             mutated_network_path = create_mutation_output_folder(road_network_folder_path, mutation_group=i + 1)
@@ -108,36 +121,10 @@ if __name__ == "__main__":
                 else:
                     mutated_network = concrete_mutation.apply(copy.deepcopy(mutated_network))
 
-                converter.convert_road_network_to_specified_format(mutated_network, mutated_network_path)
+                mutated_road_network_file_path = converter.convert_road_network_to_specified_format(mutated_network, mutated_network_path)
 
-                         
+                scene_path = build_scene(scene_building_settings=settings.scene_building, road_network_file_path=mutated_road_network_file_path)
 
-                if settings.scene_building.tool == "RoadRunner Scene Builder":
-                    scene_builder = RoadRunnerSceneBuilder()
-                    scene_builder.prepare()
+                simulate(scene_path=scene_path, simulation_settings=settings.simulation)
 
-                    project_path = os.path.realpath(os.path.join(os.path.dirname(__file__), "RoadRunnerProject"))
-                    import_file_path = os.path.realpath(mutated_network_path + "/road_network")
-                    import_format_name=settings.scene_building.import_format
-                    export_file_path = os.path.realpath(mutated_network_path + "/scene")
-                    export_format_name=settings.scene_building.export_format
-
-                    scene_builder.load_project(project_path=project_path)
-                    scene_builder.create_new_scene()
-                    scene_builder.import_(import_file_path=import_file_path, import_format_name=import_format_name)
-                    scene_builder.export(export_file_path=export_file_path, export_format_name=export_format_name)
-                    scene_builder.exit()                
-
-                if settings.simulation.simulator == "CARLA":
-                    scene_path = export_file_path + ".xodr"
-                    log_path = os.path.join(os.path.dirname(import_file_path), "record.log")
-                    simulator.load_scene(scene_path=scene_path)
-                    simulator.make_record(log_path=log_path, duration=1)
-    simulator.stop()
-
-    
-
-                   
-        
-       
   

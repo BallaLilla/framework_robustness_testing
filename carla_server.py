@@ -7,6 +7,7 @@ class CARLAServer():
     def __init__(self, timeout=10):
         self.exe_path = os.environ.get("CARLA")
         self.timeout = timeout
+        self.process = None
         if not self.check_carla_is_running():
             call_string = f"{self.exe_path} -dx11 -carla-server"
             print(call_string)

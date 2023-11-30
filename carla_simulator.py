@@ -18,7 +18,7 @@ class CARLASimulator(Simulator):
         self.carla_client = None
 
     def start_server(self):
-        self.carla_server = CARLAServer()
+        self.carla_server = CARLAServer(timeout=15)
     
     def client_connect_server(self):
         self.carla_client = CARLAClient()

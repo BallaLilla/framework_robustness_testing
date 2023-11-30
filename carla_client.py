@@ -8,47 +8,43 @@ class CARLAClient:
 
     def make_record(self, log_path, duration):
         print('Making record.....')
-        self.carla_client.start_recorder(log_path, duration)
+        self.carla_client.start_recorder(log_path+".log", duration)
         self.carla_client.stop_recorder()
     
     def load_scene(self, scene_path):
-        if scene_path:
-            if os.path.exists(scene_path):
-                _, file_extension = os.path.splitext(scene_path)
-                if file_extension.lower() != '.xodr':
-                    print('Error: The provided file is not an OpenDRIVE file.')
-                    return False
-                else:
-                    with open(scene_path, encoding='utf-8') as od_file:
-                        try:
-                            data = od_file.read()
-                        except OSError:
-                            print('Error reading the specified OpenDRIVE file %r.' % os.path.basename(scene_path))
-                            return False
-                            
-                        vertex_distance = 2.0
-                        max_road_length = 500.0
-                        wall_height = 0
-                        extra_width = 0.6
-                        try:
-                            self.carla_world = self.carla_client.generate_opendrive_world(
-                                data, carla.OpendriveGenerationParameters(
-                                vertex_distance=vertex_distance,
-                                max_road_length=max_road_length,
-                                wall_height=wall_height,
-                                additional_width=extra_width,
-                                smooth_junctions=True,
-                                enable_mesh_visibility=True))
-                            print('Opendrive world has been generated.')
-                        except RuntimeError as e:
-                            print('Error loading the OpenDRIVE file. Error: ' + repr(e))
-                            return False
-                    return True
-            else:
-                print("Specified scene path does not exist")
-            
-        else:
-            print("Scene path must be specified for loading into simulator")
+        if not scene_path:
+            print("Scene path must be specified for loading into the simulator")
             return False
 
+        xodr_files = [f for f in os.listdir(os.path.dirname(scene_path)) if f.endswith('.xodr')]
 
+        if not xodr_files:
+            print("No .xodr files found in the specified scene path")
+            return False
+        
+        xodr_file = xodr_files[0]
+        xodr_file_path = os.path.realpath(os.path.join(os.path.dirname(scene_path),xodr_file))
+        print("xodr_file: ", xodr_file_path)
+        with open(xodr_file_path, encoding='utf-8') as od_file:
+            try:
+                data = od_file.read()
+            except OSError:
+                print('file could not be readed.')
+                
+            print('load opendrive map %r.' % os.path.basename(xodr_file_path))
+            vertex_distance = 2.0  # in meters
+            max_road_length = 500.0 # in meters
+            wall_height = 1.0      # in meters
+            extra_width = 0.6      # in meters
+            try:
+                self.carla_world = self.carla_client.generate_opendrive_world(
+                data, carla.OpendriveGenerationParameters(
+                vertex_distance=vertex_distance,
+                max_road_length=max_road_length,
+                wall_height=wall_height,
+                additional_width=extra_width,
+                smooth_junctions=True,
+                enable_mesh_visibility=True))
+                print('Opendrive world has been generated.')
+            except Exception as e:
+                print('Error loading the OpenDRIVE file. Error: ' + repr(e))
