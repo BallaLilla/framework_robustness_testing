@@ -107,10 +107,12 @@ if __name__ == "__main__":
 
 
         for i in range(len(road_network.mutation_groups)):
+            print("mutation_group: ", i)
             mutated_network = None
             mutated_network_path = create_mutation_output_folder(road_network_folder_path, mutation_group=i + 1)
             mutation_group = road_network.mutation_groups[i]
             for m in range(len(mutation_group.mutations)):
+                print("mutation_group_m: ", m)
                 mutation_ = mutation_group.mutations[m]
                 if mutation_.type == "laneMarkingReplacer":
                     concrete_mutation = mutation.LaneMarkingReplacer(id=mutation_.params.get("id"), type=mutation_.type, newLaneType=mutation_.params.get("new_type"))
