@@ -24,3 +24,19 @@ class LaneMarkingReplacer(Mutation):
             print("Specified element cannot be found")
 
         return roadNetwork
+    
+class SpeedLimitPlacer(Mutation):
+    def __init__(self, type, id, speedLimitValue, side, offset):
+        super().__init__(type, id)
+        self.speedLimitValue = speedLimitValue
+        self.side = side
+        self.offset = offset
+    
+    def apply(self, roadNetwork):
+        road = roadNetwork.get_item_by_id(self.id)
+        if road is not None:
+            road.add_speed_limit(offset=self.offset, value=self.speedLimitValue, side=self.side)
+        else:
+            print("Specified element cannot be found")
+
+        return roadNetwork

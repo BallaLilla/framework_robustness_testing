@@ -99,7 +99,7 @@ if __name__ == "__main__":
         concrete_road_network = generate_concrete_road_network(road_network_folder_path + "/descriptor.xml")
         
         concrete_road_network_file_path = converter.convert_road_network_to_specified_format(concrete_road_network, road_network_folder_path)
-        print("concrete_road_network_file_path: ", concrete_road_network_file_path)
+        
 
         scene_path = build_scene(scene_building_settings=settings.scene_building, road_network_file_path=concrete_road_network_file_path)
 
@@ -116,6 +116,8 @@ if __name__ == "__main__":
                 mutation_ = mutation_group.mutations[m]
                 if mutation_.type == "laneMarkingReplacer":
                     concrete_mutation = mutation.LaneMarkingReplacer(id=mutation_.params.get("id"), type=mutation_.type, newLaneType=mutation_.params.get("new_type"))
+                elif mutation_.type == "SpeedLimitPlacer":
+                    concrete_mutation = mutation.SpeedLimitPlacer(id=mutation_.params.get("id"), type=mutation_.type, speedLimitValue=mutation_.params.get("value"), side=mutation_.params.get("side"), offset=mutation_.params.get("offset"))
                 if m == 0:
                     mutated_network = concrete_mutation.apply(copy.deepcopy(concrete_road_network))
                 else:

@@ -4,11 +4,13 @@ import mathworks.scenario.scene.hd.hd_lanes_pb2 as hd_lanes_pb2
 import mathworks.scenario.scene.hd.common_attributes_pb2 as common_attributes_pb2
 import mathworks.scenario.scene.hd.hd_lane_markings_pb2 as hd_lane_markings_pb2
 import mathworks.scenario.common.geometry_pb2 as geometry_pb2
+import mathworks.scenario.scene.hd.hd_static_objects_pb2 as hd_static_objects_pb2
 import google.protobuf.internal.encoder as encoder
 import google.protobuf.internal.decoder as decoder
 
 from converter import Converter
 import shapely
+import math
 
 class RoadRunnerHDMapConverter(Converter):
 
@@ -86,8 +88,40 @@ class RoadRunnerHDMapConverter(Converter):
 
         roadrunnerConverter = RoadRunnerHDMapConverter()
         rrMap = hd_map_pb2.HDMap()
+        speed_limits = [10, 20, 30, 60]
+
+        for speed_limit_value in speed_limits:
+            speed_limit_type_def_id = f"speed_limit_{speed_limit_value}"
+            asset_path = f"Assets/speed_limit_{speed_limit_value}.rrpa"
+
+            speed_limit_type_def = hd_static_objects_pb2.StaticObjectTypeDefinition(
+                id=speed_limit_type_def_id,
+                asset_path=common_attributes_pb2.RelativeAssetPath(asset_path=asset_path)
+            )
+            rrMap.static_object_types.append(speed_limit_type_def)
 
         for road in road_network.get_roads():
+            for speed_limit in road.speed_limits:
+                geoOrientedBoundingBox = geometry_pb2.GeoOrientedBoundingBox()
+                #geoOrientedBoundingBox.center = geometry_pb2.Vector3()
+                geoOrientedBoundingBox.center.x = speed_limit.pos_x
+                geoOrientedBoundingBox.center.y = speed_limit.pos_y
+                geoOrientedBoundingBox.center.z = 0
+                
+                geoOrientedBoundingBox.dimension.length = 0.5
+                geoOrientedBoundingBox.dimension.width = 0.02588
+                geoOrientedBoundingBox.dimension.height = 1.774
+
+                geoOrientedBoundingBox.geo_orientation.geo_angle.roll =  0
+                geoOrientedBoundingBox.geo_orientation.geo_angle.pitch =  0
+                geoOrientedBoundingBox.geo_orientation.geo_angle.heading = math.radians(speed_limit.orientation)
+
+                
+                for static_object_type in rrMap.static_object_types:
+                    if static_object_type.id == f"speed_limit_"+str(speed_limit.value):
+                        speed_limit_static_object = hd_static_objects_pb2.StaticObject(id=speed_limit.id, geometry=geoOrientedBoundingBox, object_type_ref =common_attributes_pb2.Reference(id=static_object_type.id))
+                rrMap.static_objects.append(speed_limit_static_object)
+
             for laneBoundary in road.get_lane_boundaries():
                 rrLaneBoundary = hd_lanes_pb2.LaneBoundary(id=laneBoundary.id)
                 roadrunnerConverter.processMultiLineSegmentList(laneBoundary.get_line(), rrLaneBoundary.geometry.values)
@@ -172,5 +206,11 @@ class RoadRunnerHDMapConverter(Converter):
         print("------lane_markings--------")
         for laneMarking in rrMap.lane_markings:
             print("\n\nid: ", laneMarking.id)
+
+        print("________________________static_obj_____________")
+        for static_obj in rrMap.static_objects:
+            print("\n\nid: ", static_obj.id)
+            
+
         
         return filepath

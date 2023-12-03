@@ -36,6 +36,20 @@ def createOffsetGeometry(offset, actMultiLineStrings, predMultiLineStrings=None)
     return offset_line
 
 
+class SpeedLimit:
+    def __init__(self, id, value, position, orientation):
+        print("pos: ", position)
+        self.id = id
+        self.value = value
+        self.pos_x = shapely.get_x(position)
+        self.pos_y = shapely.get_y(position)
+        self.orientation = orientation
+        print("SPEED_LIMIT_value: ", self.value)
+        print("SPEED_LIMIT_pos_x: ", self.pos_x)
+        print("SPEED_LIMIT_pos_y: ", self.pos_y)
+        print("SPEED_LIMIT_orientation: ", self.orientation)
+        
+
 
 
 class Geometry:
@@ -353,6 +367,7 @@ class Road:
         self.rightNeighbour = None
         self.leftNeighbour = None
         self.lane_boundaries = []
+        self.speed_limits = []
         
     def createRoadFromXMLElement(road_element, id):
         geometry_element= road_element.find("geometry")
@@ -572,7 +587,30 @@ class Road:
                         if boundary.id == lane_boundary.id:
                             lane_boundary.set_marking(lane_marking)
                             lane_marking.set_id(boundary.id + "_marking")
-                    
+
+
+
+    def add_speed_limit(self, value, side, offset):
+        print("ADDING SPEED LIMIT")
+        if side == "left" or side =="both":
+            mostLeftLane = self.get_all_lanes()[-1]
+            position = createOffsetGeometry(offset=offset, actMultiLineStrings=mostLeftLane.leftBoundaryObject.line)
+            position = shapely.get_geometry(position, -1)
+            position = shapely.get_point(position, -1)
+            orientation = self.geometry.startHdg + 90
+            self.speed_limits.append(SpeedLimit(id=self.id + "_left_speed_limit_" + str(value), value=value, position=position, orientation=orientation))
+
+        if side == "right" or side == "both":
+            mostLeftLane = self.get_all_lanes()[0]
+            position = createOffsetGeometry(offset=offset, actMultiLineStrings=mostLeftLane.rightBoundaryObject.line)
+            position = shapely.get_geometry(position, 0)
+            position = shapely.get_point(position, 0)
+            orientation = self.geometry.startHdg - 90
+            self.speed_limits.append(SpeedLimit(id=self.id + "_right_speed_limit_" + str(value), value=value, position=position, orientation=orientation))
+
+
+            
+
             
 
 
@@ -735,8 +773,18 @@ def generate_concrete_road_network(descriptor_xml_path):
             #print("____marking_type ", lane_marking.type)
             #print("____marking_pos ", lane_marking.position)
 
+
+        for speed_limit in road.speed_limits:
+            print("____SPEED_LIMIT", speed_limit.id)
+            #print("____marking ", lane_marking.id)
+            #print("____marking_type ", lane_marking.type)
+            #print("____marking_pos ", lane_marking.position)
+        
+
     print("x:", globals()["x"])
     print("y:", globals()["y"])
     print("hdg:", globals()["hdg"])
+
+
 
     return road_network
