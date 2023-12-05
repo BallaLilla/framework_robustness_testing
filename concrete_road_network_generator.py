@@ -723,9 +723,7 @@ class RoadNetwork:
                         return leftBoundaryObjMarking
         print("Nincs ilyen")
         return None
-                
-
-        
+    
 
 def generate_concrete_road_network(descriptor_xml_path):
 

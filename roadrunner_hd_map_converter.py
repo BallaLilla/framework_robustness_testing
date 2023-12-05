@@ -12,6 +12,9 @@ from converter import Converter
 import shapely
 import math
 
+import subprocess
+import sys
+
 class RoadRunnerHDMapConverter(Converter):
 
     def processMultiLineSegmentList(self, multilinestrings, settable):
@@ -82,9 +85,20 @@ class RoadRunnerHDMapConverter(Converter):
         HDMapLengthVarint = encoder._VarintBytes(len(HDMapBytes))
         fileStream.write(HDMapBytes)
         fileStream.close()
+
+            
+    def compile_proto_files(self):
+        process = subprocess.Popen("python roadrunner_setup.py", stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        return_code = process.wait()
+        output, error = process.communicate()
+        if error:
+            print(error)
+            sys.exit(1)
     
 
     def convert_road_network_to_specified_format(self, road_network, output_folder_path):
+
+        self.compile_proto_files()
 
         roadrunnerConverter = RoadRunnerHDMapConverter()
         rrMap = hd_map_pb2.HDMap()
