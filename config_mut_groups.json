@@ -16,16 +16,6 @@
 			        "new_type":"DashedShortSingleYellow"
             }
           ]
-        },
-        {
-          "mutation_group_id": "group_2",
-          "mutations": [
-            {
-              "type": "laneMarkingReplacer",
-              "id": "Road0_Lane-1___Road0_Lane0 boundary_marking",
-			        "new_type":"DashedShortSingleYellow"
-            }
-          ]
         }
       ]
     }

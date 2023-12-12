@@ -5,16 +5,16 @@
       "initial_position_x": 0,
       "initial_position_y": 0,
       "initial_heading": 0,
-      "segment_count": 1,
+      "segment_count": 2,
       "mutation_groups": [
         {
           "mutation_group_id": "group_1",
           "mutations": [
             {
               "type": "SpeedLimitPlacer",
-              "id": "Road0",
+              "id": "Road1",
               "value": 30,
-			  "side":"both",
+			        "side":"right",
               "offset":1
             }
           ]

@@ -74,7 +74,7 @@ width: float
           <y:Geometry height="30.0" width="88.015625" x="587.3769064612422" y="1457.0233191826735"/>
           <y:Fill color="#BEE5BF" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="50.0078125" x="-54.0078125" xml:space="preserve" y="0.0">Marking<y:LabelModel><y:SmartNodeLabelModel distance="4.0"/></y:LabelModel><y:ModelParameter><y:SmartNodeLabelModelParameter labelRatioX="0.5" labelRatioY="-0.5" nodeRatioX="-0.5" nodeRatioY="-0.5" offsetX="-4.0" offsetY="0.0" upX="0.0" upY="-1.0"/></y:ModelParameter></y:NodeLabel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="50.0078125" x="19.00390625" xml:space="preserve" y="3.0">Marking<y:LabelModel><y:SmartNodeLabelModel distance="4.0"/></y:LabelModel><y:ModelParameter><y:SmartNodeLabelModelParameter labelRatioX="0.5" labelRatioY="-0.5" nodeRatioX="-0.5" nodeRatioY="-0.5" offsetX="-4.0" offsetY="0.0" upX="0.0" upY="-1.0"/></y:ModelParameter></y:NodeLabel>
           <y:UML clipContent="true" constraint="" hasDetailsColor="false" omitDetails="false" stereotype="" use3DEffect="true">
             <y:AttributeLabel xml:space="preserve"/>
             <y:MethodLabel xml:space="preserve"/>
@@ -86,15 +86,13 @@ width: float
       <data key="d4" xml:space="preserve"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="82.8046875" width="225.46484375" x="518.6522970862422" y="1331.379154143611"/>
+          <y:Geometry height="68.103515625" width="225.46484375" x="518.6522970862422" y="1331.379154143611"/>
           <y:Fill color="#BEE5BF" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="134.01953125" x="-138.01953125" xml:space="preserve" y="0.0">LaneBoundaryMarking<y:LabelModel><y:SmartNodeLabelModel distance="4.0"/></y:LabelModel><y:ModelParameter><y:SmartNodeLabelModelParameter labelRatioX="0.5" labelRatioY="-0.5" nodeRatioX="-0.5" nodeRatioY="-0.5" offsetX="-4.0" offsetY="0.0" upX="0.0" upY="-1.0"/></y:ModelParameter></y:NodeLabel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="134.01953125" x="45.72265625" xml:space="preserve" y="3.0">LaneBoundaryMarking<y:LabelModel><y:SmartNodeLabelModel distance="4.0"/></y:LabelModel><y:ModelParameter><y:SmartNodeLabelModelParameter labelRatioX="0.5" labelRatioY="-0.5" nodeRatioX="-0.5" nodeRatioY="-0.5" offsetX="-4.0" offsetY="0.0" upX="0.0" upY="-1.0"/></y:ModelParameter></y:NodeLabel>
           <y:UML clipContent="true" constraint="" hasDetailsColor="false" omitDetails="false" stereotype="" use3DEffect="true">
             <y:AttributeLabel xml:space="preserve">id: String
-type: LaneBoundaryMarkingType
-position: LaneBoundaryMarkingPosition
-</y:AttributeLabel>
+type: LaneBoundaryMarkingType</y:AttributeLabel>
             <y:MethodLabel xml:space="preserve"/>
           </y:UML>
         </y:UMLClassNode>
@@ -183,18 +181,19 @@ orientation: float
       <data key="d4" xml:space="preserve"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="166.53564453125" width="157.7490234375" x="650.6622407088043" y="197.06201171875"/>
+          <y:Geometry height="184.29450977947695" width="157.7490234375" x="650.6622407088043" y="179.30314647052307"/>
           <y:Fill color="#FFD1BA" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.92626953125" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="147.7490234375" x="5.0" xml:space="preserve" y="26.701171875">RoadSegmentCategory<y:LabelModel><y:SmartNodeLabelModel distance="4.0"/></y:LabelModel><y:ModelParameter><y:SmartNodeLabelModelParameter labelRatioX="-0.5" labelRatioY="0.0" nodeRatioX="0.5" nodeRatioY="0.0628820229072381" offsetX="4.0" offsetY="0.0" upX="0.0" upY="-1.0"/></y:ModelParameter></y:NodeLabel>
           <y:UML clipContent="true" constraint="" hasDetailsColor="false" omitDetails="false" stereotype="enumeration" use3DEffect="true">
-            <y:AttributeLabel xml:space="preserve">UNKOWN
-RURAL
+            <y:AttributeLabel xml:space="preserve">OUTDOOR_PRIMARY_MAIN
+OUTDOOR_SECONDARY_MAIN
+OUTDOOR_MOTORWAY
+OUTDOOR_FREEWAY
+PRIMARY_MAIN
+SECONDARY_MAIN
 MOTORWAY
-TOWN
-LOWSPEED
-PEDESTRIAN
-BICYCLE</y:AttributeLabel>
+FREEWAY</y:AttributeLabel>
             <y:MethodLabel xml:space="preserve"/>
           </y:UML>
         </y:UMLClassNode>
@@ -204,20 +203,18 @@ BICYCLE</y:AttributeLabel>
       <data key="d4" xml:space="preserve"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="181.23681640625" width="108.740234375" x="375.11502053551635" y="853.3815602836878"/>
+          <y:Geometry height="166.53564453125" width="108.740234375" x="375.11502053551635" y="853.3815602836878"/>
           <y:Fill color="#FFD1BA" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.92626953125" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="64.68359375" x="22.0283203125" xml:space="preserve" y="26.701171875">LaneType<y:LabelModel><y:SmartNodeLabelModel distance="4.0"/></y:LabelModel><y:ModelParameter><y:SmartNodeLabelModelParameter labelRatioX="0.5" labelRatioY="-0.5" nodeRatioX="-0.5" nodeRatioY="-0.5" offsetX="-4.0" offsetY="0.0" upX="0.0" upY="-1.0"/></y:ModelParameter></y:NodeLabel>
           <y:UML clipContent="true" constraint="" hasDetailsColor="false" omitDetails="false" stereotype="enumeration" use3DEffect="true">
             <y:AttributeLabel xml:space="preserve">DRIVING
+MEDIAN
 PARKING
-RESTRICTED
-NONE
-SIDEWALK
-BIKING
-SHOULDER
-TRAM
-</y:AttributeLabel>
+EXIT
+ENTRY
+EMERGENCY
+BIKING</y:AttributeLabel>
             <y:MethodLabel xml:space="preserve"/>
           </y:UML>
         </y:UMLClassNode>
@@ -279,15 +276,13 @@ refLinePoints shapely.multiPoints
       <data key="d4" xml:space="preserve"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="82.8046875" width="93.37109375" x="-34.963891826875624" y="498.69817925144866"/>
+          <y:Geometry height="68.103515625" width="93.37109375" x="-34.963891826875624" y="498.69817925144866"/>
           <y:Fill color="#BEE5BF" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="24.009765625" x="34.6806640625" xml:space="preserve" y="3.0">Arc<y:LabelModel><y:SmartNodeLabelModel distance="4.0"/></y:LabelModel><y:ModelParameter><y:SmartNodeLabelModelParameter labelRatioX="0.5" labelRatioY="-0.5" nodeRatioX="-0.5" nodeRatioY="-0.5" offsetX="-4.0" offsetY="0.0" upX="0.0" upY="-1.0"/></y:ModelParameter></y:NodeLabel>
           <y:UML clipContent="true" constraint="" hasDetailsColor="false" omitDetails="false" stereotype="" use3DEffect="true">
             <y:AttributeLabel xml:space="preserve">curvature: float
-angle: float
-
-</y:AttributeLabel>
+angle: float</y:AttributeLabel>
             <y:MethodLabel xml:space="preserve"/>
           </y:UML>
         </y:UMLClassNode>
@@ -345,7 +340,7 @@ ARC</y:AttributeLabel>
           <y:Geometry height="240.04150390625" width="185.1962890625" x="814.8514052803635" y="1304.4259083719187"/>
           <y:Fill color="#FFD1BA" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.92626953125" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="175.1962890625" x="189.1962890625" xml:space="preserve" y="0.0">LaneBoundaryMarkingType<y:LabelModel><y:SmartNodeLabelModel distance="4.0"/></y:LabelModel><y:ModelParameter><y:SmartNodeLabelModelParameter labelRatioX="-0.5" labelRatioY="-0.5" nodeRatioX="0.5" nodeRatioY="-0.5" offsetX="4.0" offsetY="0.0" upX="0.0" upY="-1.0"/></y:ModelParameter></y:NodeLabel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.92626953125" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="175.1962890625" x="5.0" xml:space="preserve" y="26.701171875">LaneBoundaryMarkingType<y:LabelModel><y:SmartNodeLabelModel distance="4.0"/></y:LabelModel><y:ModelParameter><y:SmartNodeLabelModelParameter labelRatioX="-0.5" labelRatioY="-0.5" nodeRatioX="0.5" nodeRatioY="-0.5" offsetX="4.0" offsetY="0.0" upX="0.0" upY="-1.0"/></y:ModelParameter></y:NodeLabel>
           <y:UML clipContent="true" constraint="" hasDetailsColor="false" omitDetails="false" stereotype="enumeration" use3DEffect="true">
             <y:AttributeLabel xml:space="preserve">SolidSingleWhite
 SolidSingleYellow
@@ -368,23 +363,6 @@ SolidDoubleYellow</y:AttributeLabel>
       <data key="d4" xml:space="preserve"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="93.02978515625" width="206.130859375" x="228.22084943622565" y="1331.379154143611"/>
-          <y:Fill color="#FFD1BA" transparent="false"/>
-          <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.92626953125" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="196.130859375" x="-200.130859375" xml:space="preserve" y="0.0">LaneBoundaryMarkingPosition<y:LabelModel><y:SmartNodeLabelModel distance="4.0"/></y:LabelModel><y:ModelParameter><y:SmartNodeLabelModelParameter labelRatioX="0.5" labelRatioY="-0.5" nodeRatioX="-0.5" nodeRatioY="-0.5" offsetX="-4.0" offsetY="0.0" upX="0.0" upY="-1.0"/></y:ModelParameter></y:NodeLabel>
-          <y:UML clipContent="true" constraint="" hasDetailsColor="false" omitDetails="false" stereotype="enumeration" use3DEffect="true">
-            <y:AttributeLabel xml:space="preserve">RIGHT
-LEFT
-</y:AttributeLabel>
-            <y:MethodLabel xml:space="preserve"/>
-          </y:UML>
-        </y:UMLClassNode>
-      </data>
-    </node>
-    <node id="n20">
-      <data key="d4" xml:space="preserve"/>
-      <data key="d6">
-        <y:UMLClassNode>
           <y:Geometry height="93.02978515625" width="169.3017578125" x="425.51934814453125" y="269.70677939017025"/>
           <y:Fill color="#FFD1BA" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
@@ -397,7 +375,7 @@ LHT</y:AttributeLabel>
         </y:UMLClassNode>
       </data>
     </node>
-    <node id="n21">
+    <node id="n20">
       <data key="d4" xml:space="preserve"/>
       <data key="d6">
         <y:UMLClassNode>
@@ -430,7 +408,7 @@ line: shapely.multiLineStrings
     <edge id="e1" source="n4" target="n3">
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="41.40234375" tx="0.0" ty="-15.0"/>
+          <y:Path sx="0.0" sy="34.0517578125" tx="0.0" ty="-15.0"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="white_delta"/>
           <y:BendStyle smoothed="false"/>
@@ -584,7 +562,7 @@ line: shapely.multiLineStrings
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="22.75895689383509" sy="-41.40234375" tx="-71.45329283133509" ty="41.40234375"/>
+          <y:Path sx="22.75895689383509" sy="-34.0517578125" tx="-71.45329283133509" ty="41.40234375"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="white_delta"/>
           <y:BendStyle smoothed="false"/>
@@ -659,7 +637,7 @@ line: shapely.multiLineStrings
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e19" source="n2" target="n21">
+    <edge id="e19" source="n2" target="n20">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -671,7 +649,7 @@ line: shapely.multiLineStrings
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e20" source="n2" target="n21">
+    <edge id="e20" source="n2" target="n20">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -683,14 +661,14 @@ line: shapely.multiLineStrings
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e21" source="n21" target="n4">
+    <edge id="e21" source="n20" target="n4">
       <data key="d8" xml:space="preserve"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="diamond" target="plain"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="162.771484375" x="-111.38572781610151" xml:space="preserve" y="32.7816422175888">lane_boundary_marking [0..1]<y:LabelModel><y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/></y:LabelModel><y:ModelParameter><y:SmartEdgeLabelModelParameter angle="0.0" distance="30.0" distanceToCenter="true" position="right" ratio="0.5" segment="0"/></y:ModelParameter><y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/></y:EdgeLabel>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="162.771484375" x="-111.38572781610151" xml:space="preserve" y="32.7862808894638">lane_boundary_marking [0..1]<y:LabelModel><y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/></y:LabelModel><y:ModelParameter><y:SmartEdgeLabelModelParameter angle="0.0" distance="30.0" distanceToCenter="true" position="right" ratio="0.5" segment="0"/></y:ModelParameter><y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/></y:EdgeLabel>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
       </data>
