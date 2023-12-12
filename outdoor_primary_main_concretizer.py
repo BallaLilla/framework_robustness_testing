@@ -1,4 +1,4 @@
-from parametrizer import RoadProfilStrategy
+from concretizer import RoadProfilStrategy
 
 class OutdoorPrimaryMainRoadProfileStrategy(RoadProfilStrategy):
     def __init__(self, topography):

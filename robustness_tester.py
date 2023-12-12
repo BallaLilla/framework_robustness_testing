@@ -4,7 +4,7 @@ import shutil
 import copy
 
 from test_settings import read_config_from_file
-from road_network_parametrizer import parametrize_road_netork
+from road_network_concretizer import concretize_road_netork
 from concrete_road_network_generator import generate_concrete_road_network
 
 from roadrunner_hd_map_converter import RoadRunnerHDMapConverter
@@ -95,7 +95,7 @@ if __name__ == "__main__":
             
     for index, road_network in enumerate(settings.road_networks):
         road_network_folder_path = create_output_folder(test_input_folder_path, index)
-        parametrize_road_netork(road_network, road_network_folder_path)
+        concretize_road_netork(road_network, road_network_folder_path)
         concrete_road_network = generate_concrete_road_network(road_network_folder_path + "/descriptor.xml")
         
         concrete_road_network_file_path = converter.convert_road_network_to_specified_format(concrete_road_network, road_network_folder_path)

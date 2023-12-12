@@ -2,7 +2,7 @@ import random
 import xml.etree.ElementTree as ET
 import xml.dom.minidom
 
-from outdoor_primary_main_parametrizer import OutdoorPrimaryMainRoadProfileStrategy
+from outdoor_primary_main_concretizer import OutdoorPrimaryMainRoadProfileStrategy
 import geometryStrategy
 
 
@@ -11,7 +11,7 @@ def choose_segment_type():
     return random.choice(segment_types)
 
 
-def parametrize_road_netork(network_setting, output_folder_path):
+def concretize_road_netork(network_setting, output_folder_path):
     road_network = ET.Element("road_network", x=str(network_setting.initial_position_x),
                                              y=str(network_setting.initial_position_y),
                                              hdg=str(network_setting.initial_heading),
