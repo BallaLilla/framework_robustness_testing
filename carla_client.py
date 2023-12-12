@@ -32,10 +32,10 @@ class CARLAClient:
                 print('file could not be readed.')
                 
             print('load opendrive map %r.' % os.path.basename(xodr_file_path))
-            vertex_distance = 2.0  # in meters
-            max_road_length = 500.0 # in meters
+            vertex_distance =0.001  # in meters
+            max_road_length = 5000.0 # in meters
             wall_height = 1.0      # in meters
-            extra_width = 0.6      # in meters
+            extra_width = 0.0     # in meters
             try:
                 self.carla_world = self.carla_client.generate_opendrive_world(
                 data, carla.OpendriveGenerationParameters(
