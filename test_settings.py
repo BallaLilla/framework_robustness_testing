@@ -34,34 +34,30 @@ class Simulation:
         self.simulator = simulator
 
 class Config:
-    def __init__(self, road_networks, road_network_format, scene_building, simulation):
-        self.road_networks = road_networks
+    def __init__(self, road_network, road_network_format, scene_building, simulation):
+        self.road_network = road_network
         self.scene_building = scene_building
         self.simulation = simulation
         self.road_network_format = road_network_format
 
 def json_to_config(json_data):
-    road_networks_data = json_data.get("road_networks", [])
-    road_networks = []
+    road_network_data = json_data.get("road_network")
 
-    for road_network_data in road_networks_data:
-        resolution = road_network_data.get("resolution")
-        segment_count = road_network_data.get("segment_count")
-        initial_pos_x = road_network_data.get("initial_position_x", 0)
-        initial_pos_y = road_network_data.get("initial_position_y", 0)
-        initial_heading = road_network_data.get("initial_heading", 0)
+    resolution = road_network_data.get("resolution")
+    segment_count = road_network_data.get("segment_count")
+    initial_pos_x = road_network_data.get("initial_position_x", 0)
+    initial_pos_y = road_network_data.get("initial_position_y", 0)
+    initial_heading = road_network_data.get("initial_heading", 0)
         
-        road_network = RoadNetwork(resolution=resolution, segment_count=segment_count, initial_position_x=initial_pos_x,
+    road_network = RoadNetwork(resolution=resolution, segment_count=segment_count, initial_position_x=initial_pos_x,
                                    initial_position_y=initial_pos_y, initial_heading=initial_heading)
         
-        mutation_groups = road_network_data.get("mutation_groups", [])
-        for mutation_group_data in mutation_groups:
-            mutation_group_id = mutation_group_data.get("mutation_group_id", "")
-            mutations = mutation_group_data.get("mutations", [])
-            mutation_group = MutationGroup(mutation_group_id=mutation_group_id, mutations=mutations)
-            road_network.add_mutation_group(mutation_group)
-
-        road_networks.append(road_network)
+    mutation_groups = road_network_data.get("mutation_groups", [])
+    for mutation_group_data in mutation_groups:
+        mutation_group_id = mutation_group_data.get("mutation_group_id", "")
+        mutations = mutation_group_data.get("mutations", [])
+        mutation_group = MutationGroup(mutation_group_id=mutation_group_id, mutations=mutations)
+        road_network.add_mutation_group(mutation_group)
 
     road_network_format = json_data.get("format", "RoadRunner HD Map")
     scene_building_data = json_data.get("scene_building", {})
@@ -70,7 +66,7 @@ def json_to_config(json_data):
     simulator_data = json_data.get("simulation", {})
     simulation = Simulation(**simulator_data)
 
-    return Config(road_networks, road_network_format, scene_building, simulation)
+    return Config(road_network, road_network_format, scene_building, simulation)
 
 def read_config_from_file(file_path):
     with open(file_path, 'r') as file:

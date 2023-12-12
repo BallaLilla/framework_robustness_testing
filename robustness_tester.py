@@ -23,8 +23,8 @@ def parse_arguments():
     return parser.parse_args()
 
 
-def create_output_folder(test_input_folder_path, road_network_index):
-    road_network_folder_name = f"road_network_{road_network_index + 1}"
+def create_output_folder(test_input_folder_path):
+    road_network_folder_name = f"road_network"
     road_network_folder_path = os.path.join(test_input_folder_path, road_network_folder_name)
     if os.path.exists(os.path.realpath(road_network_folder_path)):
         shutil.rmtree(road_network_folder_path)
@@ -92,41 +92,40 @@ if __name__ == "__main__":
     converter = None
     if settings.road_network_format == "RoadRunner HD Map":
             converter = RoadRunnerHDMapConverter()
-            
-    for index, road_network in enumerate(settings.road_networks):
-        road_network_folder_path = create_output_folder(test_input_folder_path, index)
-        concretize_road_netork(road_network, road_network_folder_path)
-        concrete_road_network = generate_concrete_road_network(road_network_folder_path + "/descriptor.xml")
+
+    road_network = settings.road_network
+
+    road_network_folder_path = create_output_folder(test_input_folder_path)
+    concretize_road_netork(road_network, road_network_folder_path)
+    concrete_road_network = generate_concrete_road_network(road_network_folder_path + "/descriptor.xml")
         
-        concrete_road_network_file_path = converter.convert_road_network_to_specified_format(concrete_road_network, road_network_folder_path)
+    concrete_road_network_file_path = converter.convert_road_network_to_specified_format(concrete_road_network, road_network_folder_path)
         
 
-        scene_path = build_scene(scene_building_settings=settings.scene_building, road_network_file_path=concrete_road_network_file_path)
+    scene_path = build_scene(scene_building_settings=settings.scene_building, road_network_file_path=concrete_road_network_file_path)
 
-        simulate(scene_path=scene_path, simulation_settings=settings.simulation)
+    simulate(scene_path=scene_path, simulation_settings=settings.simulation)
 
 
-        for i in range(len(road_network.mutation_groups)):
-            print("mutation_group: ", i)
-            mutated_network = None
-            mutated_network_path = create_mutation_output_folder(road_network_folder_path, mutation_group=i + 1)
-            mutation_group = road_network.mutation_groups[i]
-            for m in range(len(mutation_group.mutations)):
-                print("mutation_group_m: ", m)
-                mutation_ = mutation_group.mutations[m]
-                if mutation_.type == "laneMarkingReplacer":
-                    concrete_mutation = mutation.LaneMarkingReplacer(id=mutation_.params.get("id"), type=mutation_.type, newLaneType=mutation_.params.get("new_type"))
-                elif mutation_.type == "SpeedLimitPlacer":
+    for i in range(len(road_network.mutation_groups)):
+        print("mutation_group: ", i)
+        mutated_network = None
+        mutated_network_path = create_mutation_output_folder(road_network_folder_path, mutation_group=i + 1)
+        mutation_group = road_network.mutation_groups[i]
+        for m in range(len(mutation_group.mutations)):
+            print("mutation_group_m: ", m)
+            mutation_ = mutation_group.mutations[m]
+            if mutation_.type == "laneMarkingReplacer":
+                concrete_mutation = mutation.LaneMarkingReplacer(id=mutation_.params.get("id"), type=mutation_.type, newLaneType=mutation_.params.get("new_type"))
+            elif mutation_.type == "SpeedLimitPlacer":
                     concrete_mutation = mutation.SpeedLimitPlacer(id=mutation_.params.get("id"), type=mutation_.type, speedLimitValue=mutation_.params.get("value"), side=mutation_.params.get("side"), offset=mutation_.params.get("offset"))
-                if m == 0:
-                    mutated_network = concrete_mutation.apply(copy.deepcopy(concrete_road_network))
-                else:
-                    mutated_network = concrete_mutation.apply(copy.deepcopy(mutated_network))
+            if m == 0:
+                mutated_network = concrete_mutation.apply(copy.deepcopy(concrete_road_network))
+            else:
+                mutated_network = concrete_mutation.apply(copy.deepcopy(mutated_network))
 
-                mutated_road_network_file_path = converter.convert_road_network_to_specified_format(mutated_network, mutated_network_path)
+            mutated_road_network_file_path = converter.convert_road_network_to_specified_format(mutated_network, mutated_network_path)
 
-                scene_path = build_scene(scene_building_settings=settings.scene_building, road_network_file_path=mutated_road_network_file_path)
+            scene_path = build_scene(scene_building_settings=settings.scene_building, road_network_file_path=mutated_road_network_file_path)
 
-                simulate(scene_path=scene_path, simulation_settings=settings.simulation)
-
-  
+            simulate(scene_path=scene_path, simulation_settings=settings.simulation)
