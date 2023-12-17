@@ -8,32 +8,32 @@ class RoadRunnerClient:
         self.api = roadrunner_service_pb2_grpc.RoadRunnerServiceStub(self.channel)
 
     def load_project(self, project_path):
-        print("Load project")
+        #print("Load project")
         loadProjectRequest = roadrunner_service_messages_pb2.LoadProjectRequest()
         loadProjectRequest.folder_path =  project_path
         self.api.LoadProject(loadProjectRequest)
 
     def create_new_scene(self):
-        print("New scene creation")
+        #print("New scene creation")
         newSceneRequest = roadrunner_service_messages_pb2.NewSceneRequest()
         self.api.NewScene(newSceneRequest)
 
     def import_(self, import_file_path, import_format_name):
-        print("Import")
+        #print("Import")
         importRequest = roadrunner_service_messages_pb2.ImportRequest()
         importRequest.file_path = import_file_path
         importRequest.format_name = import_format_name
         self.api.Import(importRequest)
 
     def export(self, export_file_path, export_format_name):
-        print("Export")
+        #print("Export")
         exportRequest = roadrunner_service_messages_pb2.ExportRequest()
         exportRequest.file_path = export_file_path
         exportRequest.format_name = export_format_name
         self.api.Export(exportRequest)
     
     def exit(self):
-        print("exit")
+        #print("exit")
         exitRequest = roadrunner_service_messages_pb2.ExitRequest()
         self.api.Exit(exitRequest)
         self.channel.close()

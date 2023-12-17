@@ -1,23 +1,35 @@
 {
   "road_network": {
-      "resolution": 10,
-      "initial_position_x": 0,
-      "initial_position_y": 0,
-      "initial_heading": 0,
-      "segment_count": 1,
-      "mutation_groups": [
-        {
-          "mutation_group_id": "group_1",
-          "mutations": [
-            {
-              "type": "laneMarkingReplacer",
-              "id": "Road0_Lane0___Road0_Lane1 boundary_marking",
-			        "new_type":"DashedShortSingleYellow"
-            }
-          ]
-        }
-      ]
-    },
+    "resolution": 10,
+    "initial_position_x": 0,
+    "initial_position_y": 0,
+    "initial_heading": 0,
+    "segment_count": 1,
+    "mutation_groups": [
+      {
+        "mutation_group_id": "group_1",
+        "mutations": [
+          {
+            "type": "SpeedLimitPlacer",
+            "id": "Road1",
+            "value": 30,
+            "side": "right",
+            "offset": -1
+          }
+        ]
+      },
+      {
+        "mutation_group_id": "group_2",
+        "mutations": [
+          {
+            "type": "LaneMarkingReplacer",
+            "id": "Road1_Lane0___Road1_Lane1 boundary_marking",
+            "new_type": "DashedShortSingleYellow"
+          }
+        ]
+      }
+    ]
+  },
   "scene_building": {
     "tool": "RoadRunner Scene Builder",
     "import_format": "RoadRunner HD Map",

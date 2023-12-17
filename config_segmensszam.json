@@ -1,11 +1,11 @@
 {
   "road_network": {
-      "resolution": 3000,
+      "resolution": 10,
       "initial_position_x": 0,
       "initial_position_y": 0,
       "initial_heading": 0,
-      "segment_count": 2
-  },
+      "segment_number": 2
+    },
   "scene_building": {
     "tool": "RoadRunner Scene Builder",
     "import_format": "RoadRunner HD Map",

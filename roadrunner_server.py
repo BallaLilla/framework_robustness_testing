@@ -13,7 +13,7 @@ class RoadRunnerServer:
         if self.roadrunner_is_running:
             self.kill()
         callString = "AppRoadRunner --apiPort " + str(api_port) + " --projectPath " + project_path
-        print(callString)
+        #print(callString)
         self.process = subprocess.Popen(callString, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         time.sleep(timeout)
 

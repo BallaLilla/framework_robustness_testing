@@ -154,9 +154,7 @@ class Arc(Geometry):
         self.endX = shapely.get_x(endPoint)
         self.endY = shapely.get_y(endPoint)
         self.endHdg = self.startHdg + self.angle
-        #print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!refLinePoints: ", self.refLinePoints)
         self.createMultiLineStringsFromRefLinePoints()
-        #print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!refLine: ", self.refLine)
         
     
     def calculateRefLinePoints(self):
@@ -382,11 +380,8 @@ class Road:
         road = Road(id, geometry=plan_view_geo, type=type, traffic_rule=traffic_rule)
 
         globals()["x"] = road.geometry.endX
-        print("globals()[x]: ",  globals()["x"])
         globals()["y"] = road.geometry.endY
-        print("globals()[y]: ",  globals()["y"])
         globals()["hdg"] = road.geometry.endHdg
-        print("globals()[hdg]: ",  globals()["hdg"])
         
         return road
     
@@ -731,58 +726,5 @@ def generate_concrete_road_network(descriptor_xml_path):
     global x, y, hdg, resolution
     
     road_network = RoadNetwork.build_from_xml(descriptor_xml_path)
-    for road in road_network.roads:
-        print("road_id", road.id)
-        print("     refLine: ", road.geometry)
-        if road.successor:
-            print("     successor_id: ", road.successor.id)
-        if road.predecessor:
-            print("     predecessor_id: ", road.predecessor.id)
-        for section in road.sections:
-            for lane in road.sections[section].get_lanes():
-                print("\n         lane_id", lane.id)
-                #print("         lane_geo", lane.center_line)
-                print("         lane_right_boundaryObject_id", lane.rightBoundaryObject.id)
-                marking = lane.rightBoundaryObject.get_marking()
-                print("         lane_right_boundary_marking_id", marking.id)
-                print("         lane_right_boundary_marking_type", marking.type)
-                print("         lane_left_boundaryObject_id", lane.leftBoundaryObject.id)
-                marking = lane.leftBoundaryObject.get_marking()
-                print("         lane_left_boundary_marking_id", marking.id)
-                print("         lane_left_boundary_marking_type", marking.type)
-                if lane.successor:
-                    print("         lane_suc_id", lane.successor.id)
-                if lane.predecessor:
-                    print("         lane_pred_id", lane.predecessor.id)
-                print("         lane_type", lane.type)
-                print("         lane_travel_dir", lane.travel_dir)
-                print("         lane_width", lane.width)
-                print("         lane_section", lane.section)
-                print("         lane_offset", lane.offsetFromCenterLane)
-                if lane.rightNeighbour:
-                    print("         right_neighbour", lane.rightNeighbour.id)
-                if lane.leftNeighbour:
-                    print("         left_neighbour", lane.leftNeighbour.id)
-
-        for boundary in road.lane_boundaries:
-            print("____boundary_id ", boundary.id)
-            lane_marking = boundary.get_marking()
-            #print("____marking ", lane_marking.id)
-            #print("____marking_type ", lane_marking.type)
-            #print("____marking_pos ", lane_marking.position)
-
-
-        for speed_limit in road.speed_limits:
-            print("____SPEED_LIMIT", speed_limit.id)
-            #print("____marking ", lane_marking.id)
-            #print("____marking_type ", lane_marking.type)
-            #print("____marking_pos ", lane_marking.position)
-        
-
-    print("x:", globals()["x"])
-    print("y:", globals()["y"])
-    print("hdg:", globals()["hdg"])
-
-
-
+    
     return road_network

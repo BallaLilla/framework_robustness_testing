@@ -43,8 +43,8 @@ class Config:
 def json_to_config(json_data):
     road_network_data = json_data.get("road_network")
 
-    resolution = road_network_data.get("resolution")
-    segment_count = road_network_data.get("segment_count")
+    resolution = road_network_data.get("resolution", 10)
+    segment_count = road_network_data.get("segment_count", 1)
     initial_pos_x = road_network_data.get("initial_position_x", 0)
     initial_pos_y = road_network_data.get("initial_position_y", 0)
     initial_heading = road_network_data.get("initial_heading", 0)

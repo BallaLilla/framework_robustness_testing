@@ -34,8 +34,6 @@ def concretize_road_netork(network_setting, output_folder_path):
 
         road_element = ET.SubElement(road_network, "road", type=category, traffic_rule=traffic_rule)
         geometry_type = choose_segment_type()
-        print("i: ", i)
-        print("type: ", geometry_type)
         geometry_strategy_ = None
         geometry_element = None
         if geometry_type == "arc":
@@ -83,4 +81,6 @@ def concretize_road_netork(network_setting, output_folder_path):
 
     with open(output_file_path, "wb") as file:
         file.write(pretty_xml_str.encode('utf-8'))
+
+
 

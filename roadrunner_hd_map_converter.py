@@ -98,7 +98,7 @@ class RoadRunnerHDMapConverter(Converter):
 
     def convert_road_network_to_specified_format(self, road_network, output_folder_path):
 
-        self.compile_proto_files()
+        #self.compile_proto_files()
 
         roadrunnerConverter = RoadRunnerHDMapConverter()
         rrMap = hd_map_pb2.HDMap()
@@ -196,35 +196,4 @@ class RoadRunnerHDMapConverter(Converter):
         filepath = output_folder_path  + "/road_network.rrhd"
         self.writeRRHD(filepath, headerMessage, rrMap)
 
-        print("------HD_map------")
-        print("------lanes--------")
-        for lane in rrMap.lanes:
-            print("\n\nid: ", lane.id)
-            print("geo: ", lane.geometry)
-            print("travel_dir: ", lane.travel_dir)
-            print("type: ", lane.lane_type)
-            print("right_boundary: ", lane.right_lane_boundary)
-            print("left_boundary: ", lane.left_lane_boundary)
-            for i in range(len(lane.successors)):
-                print("suc: ", lane.successors[i])
-            for i in range(len(lane.predecessors)):
-                print("pred: ", lane.predecessors[i])
-        
-        print("------lane_boundaries--------")
-        for laneBoundary in rrMap.lane_boundaries:
-            print("\n\nid: ", laneBoundary.id)
-            print("geo: ", laneBoundary.geometry)
-            print("param_attributes: ", laneBoundary.parametric_attributes)
-
-        
-        print("------lane_markings--------")
-        for laneMarking in rrMap.lane_markings:
-            print("\n\nid: ", laneMarking.id)
-
-        print("________________________static_obj_____________")
-        for static_obj in rrMap.static_objects:
-            print("\n\nid: ", static_obj.id)
-            
-
-        
         return filepath
